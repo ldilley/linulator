@@ -1,0 +1,7 @@
+1.) Add network functionality (telnet)
+2.) Add command parsing/implement some commands
+3.) Add filesystem support
+4.) Use iptables/ipfw in howto to redirect traffic to an arbitrary high-level port from TCP 22 and 23
+5.) Add SSH server support
+6.) Add chroot() support?
+7.) Test on windows (#ifdef WIN32, don't call setuid()/setgid() and fork()). Network code will likely need porting as well.

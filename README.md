@@ -1,4 +1,4 @@
-linpot
+LinPot
 ======
 
 A Linux honeypot written in C
@@ -12,7 +12,7 @@ Note: This project is a work in progress and only does the following so far:
 
 * Launches as a daemon and changes effective user and group ID
 * Can log messages based on severity
-* Parse a configuration file
+* Parses a configuration file
 
 The next feature I am working on is adding network support so you can telnet to the honeypot for
 example.

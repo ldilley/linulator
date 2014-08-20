@@ -1,0 +1,10 @@
+# Java class files
+*.class
+
+# Generated files
+build/
+dist/
+jdocs/
+
+# Log files
+*.log

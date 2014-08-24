@@ -22,5 +22,5 @@ package me.dilley.linpot;
 
 class Network
 {
-  // ToDo: Implement telnet service first
+
 }

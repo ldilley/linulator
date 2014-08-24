@@ -1,8 +1,7 @@
 /*
- * $Id$
  * LinPot - A Linux honeypot
- * Copyright (C) 2013 Lloyd S. Dilley <lloyd@dilley.me>
- * http://www.devux.org/projects/linpot/
+ * Copyright (C) 2014 Lloyd Dilley
+ * http://www.dilley.me/
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -11,7 +10,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License along
@@ -19,20 +18,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef SYSTEM_H
-#define SYSTEM_H
+package me.dilley.linpot;
 
-#include "types.h"
-
-typedef struct
+class Streams
 {
-  ushort hours;
-  ushort minutes;
-  ushort seconds;
-  char *month;
-  char *day;
-  ushort year;
-  ulong total_seconds;
-} time;
-
-#endif /* SYSTEM_H */
+  public static final byte STDIN = 0;  // System.in
+  public static final byte STDOUT = 1; // System.out
+  public static final byte STDERR = 2; // System.err
+}

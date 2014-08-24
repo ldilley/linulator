@@ -1,8 +1,7 @@
 /*
- * $Id$
  * LinPot - A Linux honeypot
- * Copyright (C) 2013 Lloyd S. Dilley <lloyd@dilley.me>
- * http://www.devux.org/projects/linpot/
+ * Copyright (C) 2014 Lloyd Dilley
+ * http://www.dilley.me/
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -11,7 +10,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License along
@@ -19,11 +18,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef NETWORK_H
-#define NETWORK_H
+package me.dilley.linpot;
 
-#include "config.h"
+class TelnetServer
+{
 
-void start_network(config *options);
-
-#endif /* NETWORK_H */
+}

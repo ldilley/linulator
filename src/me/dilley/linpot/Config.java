@@ -64,7 +64,7 @@ class Config
       this.listenAddress = listenAddress;
     else
     {
-      Log.write((byte)0, "listen_address is not set. Listening on all available interfaces...");
+      Log.write(0, "listen_address is not set. Listening on all available interfaces...");
       this.listenAddress = Defaults.DEFAULT_LISTEN_ADDRESS; // listen on all available interfaces
     }
   }
@@ -176,14 +176,14 @@ class Config
 
   public void setHostName(String hostName)
   {
-    short domainIndex = 0;
+    int domainIndex = 0;
     String domainName = "";
 
     if(hostName.length() > 0)
       this.hostName = hostName;
     else
     {
-      Log.write((byte)1, "host_name value is not set. Setting host name to: " + Defaults.DEFAULT_HOST_NAME);
+      Log.write(1, "host_name value is not set. Setting host name to: " + Defaults.DEFAULT_HOST_NAME);
       System.out.println("Warning: host_name value is not set. Setting host name to: " + Defaults.DEFAULT_HOST_NAME);
       this.hostName = Defaults.DEFAULT_HOST_NAME;
     }
@@ -191,12 +191,12 @@ class Config
     // Is it a valid host name?
     if(!this.hostName.matches("^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$") || this.hostName.length() > Limits.MAX_HOST_NAME_LENGTH)
     {
-      Log.write((byte)1, "host_name value is invalid. Setting host name to: " + Defaults.DEFAULT_HOST_NAME);
+      Log.write(1, "host_name value is invalid. Setting host name to: " + Defaults.DEFAULT_HOST_NAME);
       System.out.println("Warning: host_name value is invalid. Setting host name to: " + Defaults.DEFAULT_HOST_NAME);
       this.hostName = Defaults.DEFAULT_HOST_NAME;
     }
 
-    domainIndex = (short)this.hostName.indexOf('.');
+    domainIndex = this.hostName.indexOf('.');
     if(domainIndex > 0)
       domainName = this.hostName.substring(domainIndex + 1);
 
@@ -214,7 +214,7 @@ class Config
     // domainName is already set to empty in validateOption()
     //if(this.domainName.length() == 0)
     //{
-    //  Log.write((byte)1, "domain_name value is not set. Setting domain name to: " + Defaults.DEFAULT_DOMAIN_NAME);
+    //  Log.write(1, "domain_name value is not set. Setting domain name to: " + Defaults.DEFAULT_DOMAIN_NAME);
     //  System.out.println("Warning: domain_name value is not set. Setting domain name to: " + Defaults.DEFAULT_DOMAIN_NAME);
     //  this.domainName = Defaults.DEFAULT_DOMAIN_NAME;
     //}
@@ -241,7 +241,7 @@ class Config
       this.rootPassword = rootPassword;
     else
     {
-      Log.write((byte)1, "root_password value is invalid. Setting root password to: " + Defaults.DEFAULT_ROOT_PASSWORD);
+      Log.write(1, "root_password value is invalid. Setting root password to: " + Defaults.DEFAULT_ROOT_PASSWORD);
       System.out.println("Warning: root_password value is invalid. Setting root password to: " + Defaults.DEFAULT_ROOT_PASSWORD);
       this.rootPassword = Defaults.DEFAULT_ROOT_PASSWORD;
     }
@@ -258,14 +258,14 @@ class Config
       this.fakeDistro = fakeDistro;
     else
     {
-      Log.write((byte)1, "fake_distro value is not set. Setting Linux distribution to: " + Defaults.DEFAULT_DISTRIBUTION);
+      Log.write(1, "fake_distro value is not set. Setting Linux distribution to: " + Defaults.DEFAULT_DISTRIBUTION);
       System.out.println("Warning: fake_distro value is not set. Setting Linux distribution to: " + Defaults.DEFAULT_DISTRIBUTION);
       this.fakeDistro = Defaults.DEFAULT_DISTRIBUTION;
     }
 
     if(!this.fakeDistro.equals("centos5") && !this.fakeDistro.equals("centos6") && !this.fakeDistro.equals("debian7") && !this.fakeDistro.equals("rhel5") && !this.fakeDistro.equals("rhel6") && !this.fakeDistro.equals("sles11"))
     {
-      Log.write((byte)1, "fake_distro value is invalid. Setting Linux distribution to: " + Defaults.DEFAULT_DISTRIBUTION);
+      Log.write(1, "fake_distro value is invalid. Setting Linux distribution to: " + Defaults.DEFAULT_DISTRIBUTION);
       System.out.println("Warning: fake_distro value is invalid. Setting Linux distribution to: " + Defaults.DEFAULT_DISTRIBUTION);
       this.fakeDistro = Defaults.DEFAULT_DISTRIBUTION;
     }
@@ -284,21 +284,21 @@ class Config
         this.fakeProcessors = Byte.parseByte(fakeProcessors);
       else
       {
-        Log.write((byte)1, "fake_processors value is not set. Setting number of CPUs to: " + Defaults.DEFAULT_PROCESSORS);
+        Log.write(1, "fake_processors value is not set. Setting number of CPUs to: " + Defaults.DEFAULT_PROCESSORS);
         System.out.println("Warning: fake_processors value is not set. Setting number of CPUs to: " + Defaults.DEFAULT_PROCESSORS);
         this.fakeProcessors = Defaults.DEFAULT_PROCESSORS;
       }
     }
     catch(NumberFormatException nfe)
     {
-      Log.write((byte)1, "fake_processors value is invalid. Setting number of CPUs to: " + Defaults.DEFAULT_PROCESSORS);
+      Log.write(1, "fake_processors value is invalid. Setting number of CPUs to: " + Defaults.DEFAULT_PROCESSORS);
       System.out.println("Warning: fake_processors value is invalid. Setting number of CPUs to: " + Defaults.DEFAULT_PROCESSORS);
       this.fakeProcessors = Defaults.DEFAULT_PROCESSORS;
     }
 
     if(this.fakeProcessors < Limits.MIN_PROCESSORS || this.fakeProcessors > Limits.MAX_PROCESSORS)
     {
-      Log.write((byte)1, "fake_processors value is out of range. Setting number of CPUs to: " + Defaults.DEFAULT_PROCESSORS);
+      Log.write(1, "fake_processors value is out of range. Setting number of CPUs to: " + Defaults.DEFAULT_PROCESSORS);
       System.out.println("Warning: fake_processors value is out of range. Setting number of CPUs to: " + Defaults.DEFAULT_PROCESSORS);
       this.fakeProcessors = Defaults.DEFAULT_PROCESSORS;
     }
@@ -317,21 +317,21 @@ class Config
         this.fakeMemory = Integer.parseInt(fakeMemory);
       else
       {
-        Log.write((byte)1, "fake_memory value is not set. Setting amount of RAM to: " + Defaults.DEFAULT_MEMORY);
+        Log.write(1, "fake_memory value is not set. Setting amount of RAM to: " + Defaults.DEFAULT_MEMORY);
         System.out.println("Warning: fake_memory value is not set. Setting amount of RAM to: " + Defaults.DEFAULT_MEMORY);
         this.fakeMemory = Defaults.DEFAULT_MEMORY;
       }
     }
     catch(NumberFormatException nfe)
     {
-      Log.write((byte)1, "fake_memory value is invalid. Setting amount of RAM to: " + Defaults.DEFAULT_MEMORY);
+      Log.write(1, "fake_memory value is invalid. Setting amount of RAM to: " + Defaults.DEFAULT_MEMORY);
       System.out.println("Warning: fake_memory value is invalid. Setting amount of RAM to: " + Defaults.DEFAULT_MEMORY);
       this.fakeMemory = Defaults.DEFAULT_MEMORY;
     }
 
     if(this.fakeMemory < Limits.MIN_MEMORY || this.fakeMemory > Limits.MAX_MEMORY)
     {
-      Log.write((byte)1, "fake_memory value is out of range. Setting amount of RAM to: " + Defaults.DEFAULT_MEMORY);
+      Log.write(1, "fake_memory value is out of range. Setting amount of RAM to: " + Defaults.DEFAULT_MEMORY);
       System.out.println("Warning: fake_memory value is out of range. Setting amount of RAM to: " + Defaults.DEFAULT_MEMORY);
       this.fakeMemory = Defaults.DEFAULT_MEMORY;
     }
@@ -355,14 +355,14 @@ class Config
       }
       else
       {
-        Log.write((byte)1, "debug_mode value is not set. Setting debug mode to: Enabled");
+        Log.write(1, "debug_mode value is not set. Setting debug mode to: Enabled");
         System.out.println("Warning: debug_mode value is not set. Setting debug mode to: Enabled");
         this.debugMode = Defaults.DEFAULT_DEBUG_MODE;
       }
     }
     catch(NumberFormatException nfe)
     {
-      Log.write((byte)1, "debug_mode value is invalid. Setting debug mode to: Enabled");
+      Log.write(1, "debug_mode value is invalid. Setting debug mode to: Enabled");
       System.out.println("Warning: debug_mode value is invalid. Setting debug mode to: Enabled");
       this.debugMode = Defaults.DEFAULT_DEBUG_MODE;
     }      
@@ -470,7 +470,7 @@ class Config
     }
     catch(NumberFormatException nfe)
     {
-      Log.write((byte)1, "The " + serviceName + " service has been disabled since " + option + " value is invalid: " + port1);
+      Log.write(1, "The " + serviceName + " service has been disabled since " + option + " value is invalid: " + port1);
       System.out.println("Warning: The " + serviceName + " service has been disabled since " + option + " value is invalid: " + port1);
       port2 = 0; // disable service
       return port2;
@@ -478,14 +478,14 @@ class Config
 
     if(port2 < Limits.MIN_PORT || port2 > Limits.MAX_PORT)
     {
-      Log.write((byte)1, "The " + serviceName + " service has been disabled since " + option + " value is out of range: " + port2);
+      Log.write(1, "The " + serviceName + " service has been disabled since " + option + " value is out of range: " + port2);
       System.out.println("Warning: The " + serviceName + " service has been disabled since " + option + " value is out of range: " + port2);
       port2 = 0;
     }
 
     if(port2 == 0)
     {
-      Log.write((byte)0, "The " + serviceName + " service has been disabled since " + option + " value is not set.");
+      Log.write(0, "The " + serviceName + " service has been disabled since " + option + " value is not set.");
       System.out.println("The " + serviceName + " service has been disabled since " + option + " value is not set.");
     }
 
@@ -522,7 +522,7 @@ class Config
 
     if(matchCount > 1)
     {
-      Log.write((byte)2, "Modify the " + option + " value in linpot.properties. The port number is not unique: " + port);
+      Log.write(2, "Modify the " + option + " value in linpot.properties. The port number is not unique: " + port);
       System.err.println("Critical: Modify the " + option + " value in linpot.properties. The port number is not unique: " + port);
       System.exit(1);
     }

@@ -27,7 +27,7 @@ import java.util.Date;
 
 class Log
 {
-  public static void write(byte severity, String message)
+  public static void write(int severity, String message)
   {
     SimpleDateFormat timestampFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
     Date currentTime = new Date();
@@ -37,15 +37,20 @@ class Log
 
     switch(severity)
     {
-      case 0: logEntry = timestamp + " INFO: " + message + '\n';
+      case 0:
+        logEntry = timestamp + " INFO: " + message + '\n';
         break;
-      case 1: logEntry = timestamp + " WARN: " + message + '\n';
+      case 1:
+        logEntry = timestamp + " WARN: " + message + '\n';
         break;
-      case 2: logEntry = timestamp + " CRIT: " + message + '\n';
+      case 2:
+        logEntry = timestamp + " CRIT: " + message + '\n';
         break;
-      case 3: logEntry = timestamp + " DBUG: " + message + '\n';
+      case 3:
+        logEntry = timestamp + " DBUG: " + message + '\n';
         break;
-      default: logEntry = timestamp + " INFO: " + message + '\n';
+      default:
+        logEntry = timestamp + " INFO: " + message + '\n';
         break;
     }
 
@@ -59,6 +64,7 @@ class Log
     {
       System.err.println("Unable to write to linpot.log file:");
       System.err.println(ioe.getMessage());
+      System.exit(1);
     }
   }
 }

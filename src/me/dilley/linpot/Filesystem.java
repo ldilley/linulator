@@ -1,8 +1,7 @@
 /*
- * $Id$
  * LinPot - A Linux honeypot
- * Copyright (C) 2013 Lloyd S. Dilley <lloyd@dilley.me>
- * http://www.devux.org/projects/linpot/
+ * Copyright (C) 2014 Lloyd Dilley
+ * http://www.dilley.me/
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -11,7 +10,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License along
@@ -19,21 +18,33 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ACCOUNT_H
-#define ACCOUNT_H
+package me.dilley.linpot;
 
-#include "types.h"
-
-typedef struct
+// ToDo: This class needs to be thread safe
+class Filesystem
 {
-  ushort uid;
-  ushort gid;
-  char *username;
-  char *password;
-  char *hash;
-  char *gecos;
-  char *homedir;
-  char *shell;
-} account;
+  static long currentFreeInode; // gets set where it left off once filesystem data is loaded from Derby database
 
-#endif /* ACCOUNT_H */
+  private String mountPoint;
+  private long size;         // in bytes
+
+  public String getMountPoint()
+  {
+    return mountPoint;
+  }
+
+  public void setMountPoint(String mountPoint)
+  {
+    this.mountPoint = mountPoint;
+  }
+
+  public long getSize()
+  {
+    return size;
+  }
+
+  public void setSize(long size)
+  {
+    this.size = size;
+  }
+}

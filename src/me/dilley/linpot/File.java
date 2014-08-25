@@ -44,12 +44,13 @@ class File
   private long mtime;          // last modify time
   private boolean isBlock;     // block device
   private boolean isCharacter; // character device
-  private boolean isDirectory; 
+  private boolean isDirectory;
   private boolean isFifo;      // queue
   private boolean isLink;
   private boolean isRegular;
   private boolean isSocket;
 
+  // For use with sys_open, touch, mkdir, etc.
   public File(String name, long inode, int mode, int uid, int gid, long size, int type)
   {
     this.name = name;

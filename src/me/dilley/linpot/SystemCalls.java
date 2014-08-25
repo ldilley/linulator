@@ -95,7 +95,7 @@ class SystemCalls
    * Unlike the standard sys_stat, this method takes an optional file descriptor
    * so that it can eliminate the need for sys_fstat and sys_lstat.
    */
-  public static int sys_stat(int fileDescriptor, String file, StatBuffer statbuffer)
+  public static int sys_stat(int fileDescriptor, File file)
   {
     //if(!fileDescriptor == -1)
     // stat by fd if defined

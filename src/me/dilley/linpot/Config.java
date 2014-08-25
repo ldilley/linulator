@@ -27,13 +27,6 @@ import java.util.Properties;
 
 class Config
 {
-  public static void main(String[] args)
-  {
-    Config config = new Config();
-    config.parseConfig();
-    config.showConfig();
-  }
-
   private String listenAddress;
   private int echoPort;
   private int daytimePort;

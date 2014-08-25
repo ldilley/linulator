@@ -20,7 +20,56 @@
 
 package me.dilley.linpot;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.net.SocketException;
+
 class Network
 {
+  public static String receive(BufferedReader input)
+  {
+    String data = null;
 
+    try
+    {
+      data = input.readLine();
+    }
+    catch(IOException ioe)
+    {
+      ioe.printStackTrace();
+    }
+
+    return data;
+  }
+
+  public static int send(BufferedWriter output, String data, boolean isSeparate)
+  {
+    int bytesSent = 0;
+
+    try
+    {
+      output.write(data);
+      if(isSeparate)
+      {
+        output.newLine();
+        bytesSent = data.length() + System.getProperty("line.separator").length();
+      }
+      else
+      {
+        bytesSent = data.length();
+      }
+      output.flush();
+    }
+    catch(SocketException se)
+    {
+      se.getMessage();
+    }
+    catch(IOException ioe)
+    {
+      ioe.printStackTrace();
+    }
+
+    return bytesSent;
+  }
 }

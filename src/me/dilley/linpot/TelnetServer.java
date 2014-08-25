@@ -20,7 +20,80 @@
 
 package me.dilley.linpot;
 
-class TelnetServer
-{
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.IOException;
+import java.net.Socket;
 
+class TelnetServer implements Runnable
+{
+  protected Socket clientSocket = null;
+  protected BufferedReader input = null;
+  protected BufferedWriter output = null;
+  protected DataInputStream ios = null;  // for raw data
+  protected DataOutputStream dos = null; // for raw data
+
+  public final byte[] disableEcho = {(byte)0xFF, (byte)0xFB, (byte)0x01}; // IAC WILL ECHO
+  public final byte[] enableEcho = {(byte)0xFF, (byte)0xFC, (byte)0x01};  // IAC WONT ECHO
+
+  public TelnetServer(Socket clientSocket)
+  {
+    this.clientSocket = clientSocket;
+  }
+
+  public void run()
+  {
+    try
+    {
+      boolean isAuthenticated = false;
+      String username = null;
+      String password = null;
+      String command = null;
+      byte attempts = 0;
+      input=new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+      output=new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+      ios = new DataInputStream(clientSocket.getInputStream());
+      dos = new DataOutputStream(clientSocket.getOutputStream());
+
+      // ToDo: Actually validate credentials later
+      while(!isAuthenticated)
+      {
+        Network.send(output, "Login: ", false);
+        username = Network.receive(input);
+        if(username == null || username.length() == 0)
+          continue;
+        Network.send(output, "Password: ", false);
+        dos.write(disableEcho, 0, disableEcho.length);
+        password = Network.receive(input);
+        dos.write(enableEcho, 0, enableEcho.length);
+        Network.send(output, "", true);
+        if(password == null || password.length() == 0)
+          continue;
+        isAuthenticated = true;
+      }
+
+      // ToDo: display motd and last login
+      ios.skipBytes(3); // ignore telnet negotiation
+      while(true)
+      {
+        Network.send(output, username + "@" + OperatingSystem.getHostName() + "$ ", false);
+        command = Network.receive(input);
+        if(command == null || command.length() == 0 || command.trim().length() == 0)
+          continue;
+        if(command.trim().equals("exit") || command.trim().equals("logout"))
+          break;
+      }
+
+      input.close();
+      output.close();
+    }
+    catch(IOException ioe)
+    {
+      ioe.getMessage();
+    }
+  }
 }

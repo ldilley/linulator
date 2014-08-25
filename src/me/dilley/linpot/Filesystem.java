@@ -23,7 +23,7 @@ package me.dilley.linpot;
 // ToDo: This class needs to be thread safe
 class Filesystem
 {
-  static long currentFreeInode; // gets set where it left off once filesystem data is loaded from Derby database
+  static long nextFreeInode; // gets set where it left off once filesystem data is loaded from Derby database
 
   private String mountPoint;
   private long size;         // in bytes

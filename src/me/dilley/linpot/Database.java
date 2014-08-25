@@ -20,8 +20,58 @@
 
 package me.dilley.linpot;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Properties;
+
 // ToDo: This class needs to be thread safe
 class Database
 {
-  // Handle embedded Derby stuff here
+  private String framework = "embedded";
+  private String protocol = "jdbc:derby:";
+  private Connection connection = null;
+  private PreparedStatement preparedStatement;
+  private Statement statement;
+  private ResultSet resultSet = null;
+  private String databaseName = "linpot";
+  private Properties properties = new Properties();
+
+  public void connect()
+  {
+    try
+    {
+      connection = DriverManager.getConnection(protocol + databaseName + ";create=false", properties);
+    }
+    catch(SQLException sqle)
+    {
+      Log.write(2, "Unable to connect to database.");
+      Log.write(2, sqle.getMessage());
+      System.err.println("Critical: Unable to connect to database.");
+      System.err.println(sqle.getMessage());
+    }
+  }
+
+  public void disconnect()
+  {
+    try
+    {
+      connection.close();
+    }
+    catch(SQLException sqle)
+    {
+      Log.write(2, "Unable to disconnect from database.");
+      Log.write(2, sqle.getMessage());
+      System.err.println("Critical: Unable to disconnect from database.");
+      System.err.println(sqle.getMessage());
+    }
+  }
+
+  public void query(String query)
+  {
+    //
+  }
 }

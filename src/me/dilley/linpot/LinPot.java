@@ -27,23 +27,36 @@ class LinPot
 {
   public static final String VERSION = "LinPot v0.1";
   static Scanner scanner = null;
+  static String input = null;
   static int option = 0;
 
   public static void main(String[] args)
   {
     System.out.println(VERSION);
+    Log.write(0, VERSION);
     System.out.println("Parsing configuration file...");
+    Log.write(0, "Parsing configuration file...");
     Config config = new Config();
     config.parseConfig();
     System.out.println("Setting hostname...");
+    Log.write(0, "Setting hostname...");
     OperatingSystem.setHostName(config.getHostName());
+    OperatingSystem.setShortName(config.getShortName());
+    OperatingSystem.setDomainName(config.getDomainName());
+    System.out.println("Populating commands...");
+    Log.write(0, "Populating commands...");
+    Shell.populateCommands();
     // ToDo: Load filesystem data from Derby database
     if(config.getTelnetPort() != 0)
     {
       System.out.println("Starting telnet server...");
-      TcpServer telnetServer = new TcpServer(config.getTelnetPort(), "telnet");
+      Log.write(0, "Starting telnet server...");
+      TcpServer telnetServer = new TcpServer(config.getListenAddress(), config.getTelnetPort(), "telnet");
       new Thread(telnetServer).start();
     }
+
+    System.out.println("LinPot started successfully.");
+    Log.write(0, "LinPot started successfully.");
 
     while(true)
     {
@@ -59,7 +72,18 @@ class LinPot
         System.out.print("> ");
 
         scanner = new Scanner(System.in);
-        option = scanner.nextInt();
+        input = scanner.nextLine();
+
+        if(input == null || input.trim().length() == 0)
+          continue;
+
+        input = input.trim();
+        option = Integer.parseInt(input);
+      }
+      catch(NumberFormatException nfe)
+      {
+        System.out.println("Invalid option");
+        continue;
       }
       catch(InputMismatchException ime)
       {
@@ -70,10 +94,10 @@ class LinPot
       switch(option)
       {
         case 1:
-          System.out.println("Not implemented");
+          openConsole();
           break;
         case 2:
-          System.out.println("Not implemented");
+          Log.viewLog();
           break;
         case 3:
           System.out.println("Not implemented");
@@ -83,6 +107,7 @@ class LinPot
           break;
         case 5:
           System.out.println("Shutting down...");
+          Log.write(0, "Shutting down...");
           // ToDo: stop service threads and commit database changes
           System.exit(0);
           break;
@@ -90,6 +115,34 @@ class LinPot
           System.out.println("Invalid option");
           break;
       }
+    }
+  }
+
+  public static void openConsole()
+  {
+    Scanner scanner = null;
+    String command = null;
+    String result = null;
+
+    while(true)
+    {
+      scanner = new Scanner(System.in);
+      System.out.print("root@" + OperatingSystem.getShortName() + "# ");
+      command = scanner.nextLine();
+
+      if(command == null || command.length() == 0)
+        continue;
+      if(command.trim().equals("exit") || command.trim().equals("logout"))
+        break;
+
+      command = command.trim();
+      String[] args = command.split("\\s+");
+      result = Shell.execute(args);
+
+      if(result == null || result.length() == 0)
+        System.out.println("-bash: " + args[0] + ": command not found");
+      else
+        System.out.println(result);
     }
   }
 }

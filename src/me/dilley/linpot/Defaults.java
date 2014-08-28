@@ -39,5 +39,6 @@ class Defaults
   public static final String DEFAULT_DOMAIN_NAME = "spoof.dom";
   public static final String DEFAULT_ROOT_PASSWORD = "secret";
   public static final String DEFAULT_DISTRIBUTION = "centos5";
+  public static final boolean DEFAULT_HIDE_CONSOLE = false;
   public static final boolean DEFAULT_DEBUG_MODE = true;
 }

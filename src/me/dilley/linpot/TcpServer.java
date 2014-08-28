@@ -21,6 +21,7 @@
 package me.dilley.linpot;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -29,11 +30,13 @@ class TcpServer implements Runnable
   protected ServerSocket serverSocket = null;
   protected boolean isStopped = false;
   protected Thread runningThread = null;
+  protected String address = null;
   protected int port = 0;
   protected String service = null;
 
-  public TcpServer(int port, String service)
+  public TcpServer(String address, int port, String service)
   {
+    this.address = address;
     this.port = port;
     this.service = service;
   }
@@ -47,14 +50,18 @@ class TcpServer implements Runnable
 
     try
     {
-      this.serverSocket = new ServerSocket(this.port);
+      if(this.address.equals("*"))
+        this.serverSocket = new ServerSocket(this.port);
+      else
+        this.serverSocket = new ServerSocket(this.port, 0, InetAddress.getByName(this.address));
     }
     catch(IOException ioe)
     {
-      Log.write(2, "TCP server unable to listen on port: " + this.port);
+      Log.write(2, this.service + " server unable to listen on port: " + this.port);
       Log.write(2, ioe.getMessage());
-      System.err.println("Critical: TCP server unable to listen on port: " + this.port);
+      System.err.println("Critical: " + this.service + " server unable to listen on port: " + this.port);
       System.err.println(ioe.getMessage());
+      System.exit(1);
     }
 
     while(!isStopped)
@@ -69,9 +76,9 @@ class TcpServer implements Runnable
       {
         if(isStopped())
         {
-          Log.write(2, "TCP server stopped.");
+          Log.write(2, this.service + " server stopped.");
           Log.write(2, ioe.getMessage());
-          System.err.println("Critical: TCP server stopped.");
+          System.err.println("Critical: " + this.service + " server stopped.");
           System.err.println(ioe.getMessage());
           return;
         }
@@ -83,7 +90,7 @@ class TcpServer implements Runnable
         new Thread(new TelnetServer(clientSocket)).start();
     }
 
-    Log.write(0, "TCP server stopped.");
+    Log.write(0, this.service + " server stopped.");
   }
 
   private synchronized boolean isStopped()
@@ -101,7 +108,7 @@ class TcpServer implements Runnable
     }
     catch(IOException ioe)
     {
-      Log.write(2, "Unable to close TCP server.");
+      Log.write(2, "Unable to close " + this.service + " server.");
       Log.write(2, ioe.getMessage());
     }
   }

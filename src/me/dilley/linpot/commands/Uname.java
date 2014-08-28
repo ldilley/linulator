@@ -1,0 +1,126 @@
+/*
+ * LinPot - A Linux honeypot
+ * Copyright (C) 2014 Lloyd Dilley
+ * http://www.dilley.me/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+package me.dilley.linpot.commands;
+
+import me.dilley.linpot.OperatingSystem;
+
+public class Uname extends Command
+{
+  protected String result;
+
+  public String execute(String[] args)
+  {
+    result = null;
+
+    if(args.length == 1)
+      result = "Linux";
+
+    if(args.length > 1)
+    {
+      if(findArg(args, "-a") || findArg(args, "--all"))
+      {
+        result = "Linux " + OperatingSystem.getShortName() + " " + OperatingSystem.KERNEL_RELEASE;
+        result += " " + OperatingSystem.KERNEL_VERSION + " " + OperatingSystem.HARDWARE_ARCHITECTURE;
+        result += " " + OperatingSystem.HARDWARE_ARCHITECTURE + " " + OperatingSystem.HARDWARE_ARCHITECTURE;
+        result += " " + OperatingSystem.OPERATING_SYSTEM;
+        return result;
+      }
+      if(findArg(args, "--version"))
+      {
+        result = "uname (GNU coreutils) 8.4\nCopyright (C) 2010 Free Software Foundation, Inc.\n";
+        result += "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n";
+        result += "This is free software: you are free to change and redistribute it.\n";
+        result += "There is NO WARRANTY, to the extent permitted by law.\n\n";
+        result += "Written by David MacKenzie.";
+        return result;
+      }
+      if(findArg(args, "-s") || findArg(args, "--kernel-name"))
+        result = "Linux";
+      if(findArg(args, "-n") || findArg(args, "--nodename"))
+      {
+        if(result != null)
+          result += " " + OperatingSystem.getShortName();
+        else
+          result = OperatingSystem.getShortName();
+      }
+      if(findArg(args, "-r") || findArg(args, "--kernel-release"))
+      {
+        if(result != null)
+          result += " " + OperatingSystem.KERNEL_RELEASE;
+        else
+          result = OperatingSystem.KERNEL_RELEASE;
+      }
+      if(findArg(args, "-v") || findArg(args, "--kernel-version"))
+      {
+        if(result != null)
+          result += " " + OperatingSystem.KERNEL_VERSION;
+        else
+          result = OperatingSystem.KERNEL_VERSION;
+      }
+      if(findArg(args, "-m") || findArg(args, "--machine"))
+      {
+        if(result != null)
+          result += " " + OperatingSystem.HARDWARE_ARCHITECTURE;
+        else
+          result = OperatingSystem.HARDWARE_ARCHITECTURE;
+      }
+      if(findArg(args, "-p") || findArg(args, "--processor"))
+      {
+        if(result != null)
+          result += " " + OperatingSystem.HARDWARE_ARCHITECTURE;
+        else
+          result = OperatingSystem.HARDWARE_ARCHITECTURE;
+      }
+      if(findArg(args, "-i") || findArg(args, "--hardware-platform"))
+      {
+        if(result != null)
+          result += " " + OperatingSystem.HARDWARE_ARCHITECTURE;
+        else
+          result = OperatingSystem.HARDWARE_ARCHITECTURE;
+      }
+      if(findArg(args, "-o") || findArg(args, "--operating-system"))
+      {
+        if(result != null)
+          result += " " + OperatingSystem.OPERATING_SYSTEM;
+        else
+          result = OperatingSystem.OPERATING_SYSTEM;
+      }
+    }
+
+    return result;
+  }
+
+  public boolean findArg(String[] args, String arg)
+  {
+    boolean hasArg = false;
+
+    for(int i = 0; i < args.length; i++)
+    {
+      if(args[i].equals(arg))
+      {
+        hasArg = true;
+        break;
+      }
+    }
+
+    return hasArg;
+  }
+}

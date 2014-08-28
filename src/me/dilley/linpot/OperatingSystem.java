@@ -20,9 +20,16 @@
 
 package me.dilley.linpot;
 
-class OperatingSystem
+public class OperatingSystem
 {
+  public static final String HARDWARE_ARCHITECTURE = "x86_64";
+  public static final String OPERATING_SYSTEM = "GNU/Linux";
+  public static final String KERNEL_RELEASE = "2.6.32-431.23.3.el6.x86_64";
+  public static final String KERNEL_VERSION = "#1 SMP Thu Jul 31 17:20:51 UTC 2014";
+
   private static String hostName;
+  private static String shortName;
+  private static String domainName;
   private static int nextFreeUid; // next available user ID
   private static int nextFreeGid; // next available group ID
   private static int nextFreePid; // next available process ID
@@ -35,6 +42,26 @@ class OperatingSystem
   public static synchronized void setHostName(String newHostName)
   {
     hostName = newHostName;
+  }
+
+  public static synchronized String getShortName()
+  {
+    return shortName;
+  }
+
+  public static synchronized void setShortName(String newShortName)
+  {
+    shortName = newShortName;
+  }
+
+  public static synchronized String getDomainName()
+  {
+    return domainName;
+  }
+
+  public static synchronized void setDomainName(String newDomainName)
+  {
+    domainName = newDomainName;
   }
 
   public static synchronized int getNextFreeUid()

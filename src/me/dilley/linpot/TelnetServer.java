@@ -53,11 +53,15 @@ class TelnetServer implements Runnable
       String username = null;
       String password = null;
       String command = null;
+      String result = null;
       byte attempts = 0;
+      char sigil = '$';
       input=new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
       output=new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
       ios = new DataInputStream(clientSocket.getInputStream());
       dos = new DataOutputStream(clientSocket.getOutputStream());
+
+      Log.write(0, "TelnetServer: Connection received from " + clientSocket.getInetAddress().getHostAddress() + ':' + clientSocket.getPort() + '.');
 
       // ToDo: Actually validate credentials later
       while(!isAuthenticated)
@@ -76,20 +80,37 @@ class TelnetServer implements Runnable
         isAuthenticated = true;
       }
 
+      Log.write(0, "TelnetServer: " + username + " has logged in from " + clientSocket.getInetAddress().getHostAddress() + ':' + clientSocket.getPort() + '.');
+
       // ToDo: display motd and last login
       ios.skipBytes(3); // ignore telnet negotiation
+      if(username.equals("root"))
+        sigil = '#';
       while(true)
       {
-        Network.send(output, username + "@" + OperatingSystem.getHostName() + "$ ", false);
+        Network.send(output, username + "@" + OperatingSystem.getShortName() + sigil + " ", false);
         command = Network.receive(input);
         if(command == null || command.length() == 0 || command.trim().length() == 0)
           continue;
         if(command.trim().equals("exit") || command.trim().equals("logout"))
+        {
+          Log.write(0, "TelnetServer: " + username + " has logged out from " + clientSocket.getInetAddress().getHostAddress() + ':' + clientSocket.getPort() + '.');
           break;
+        }
+
+        command = command.trim();
+        String[] args = command.split("\\s+");
+        result = Shell.execute(args);
+
+        if(result == null || result.length() == 0)
+          Network.send(output, "-bash: " + args[0] + ": command not found", true);
+        else
+          Network.send(output, result, true);
       }
 
       input.close();
       output.close();
+      Log.write(0, "TelnetServer: Connection to " + clientSocket.getInetAddress().getHostAddress() + ':' + clientSocket.getPort() + " closed.");
     }
     catch(IOException ioe)
     {

@@ -33,6 +33,7 @@ class User
   private String password;
   private String passwordHash;
   private int lastChanged;      // days elapsed since 01/01/1970 when password was last changed
+  private String cwd;           // current working directory
 
   // For use with useradd
   public User(String userName, int uid, int gid, String gecos, String homeDirectory, String shell)
@@ -136,5 +137,15 @@ class User
   public void setLastChanged(int lastChanged)
   {
     this.lastChanged = lastChanged;
+  }
+
+  public String getCwd()
+  {
+    return cwd;
+  }
+
+  public void setCwd(String cwd)
+  {
+    this.cwd = cwd;
   }
 }

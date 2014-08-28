@@ -39,11 +39,13 @@ class Config
   private int dnsPort;
   private int httpPort;
   private String hostName;
+  private String shortName;
   private String domainName;
   private String rootPassword;
   private String fakeDistro;
   private byte fakeProcessors;
   private int fakeMemory;
+  private boolean hideConsole;
   private boolean debugMode;
 
   public String getListenAddress()
@@ -191,9 +193,24 @@ class Config
 
     domainIndex = this.hostName.indexOf('.');
     if(domainIndex > 0)
+    {
+      setShortName(this.hostName.substring(0, domainIndex));
       domainName = this.hostName.substring(domainIndex + 1);
+    }
+    else
+      setShortName(this.hostName);
 
     setDomainName(domainName);
+  }
+
+  public String getShortName()
+  {
+    return shortName;
+  }
+
+  public void setShortName(String shortName)
+  {
+    this.shortName = shortName;
   }
 
   public String getDomainName()
@@ -330,6 +347,37 @@ class Config
     }
   }
 
+  public boolean getHideConsole()
+  {
+    return hideConsole;
+  }
+
+  public void setHideConsole(String hideConsole)
+  {
+    try
+    {
+      if(hideConsole.length() > 0)
+      {
+        if(hideConsole.equals("1") || hideConsole.equalsIgnoreCase("on") || hideConsole.equalsIgnoreCase("enabled"))
+          this.hideConsole = true;
+        else
+          this.hideConsole = Boolean.parseBoolean(hideConsole);
+      }
+      else
+      {
+        Log.write(1, "hide_console value is not set. Setting hidden console mode to: Disabled");
+        System.out.println("Warning: hide_console value is not set. Setting hidden console mode to: Disabled");
+        this.hideConsole = Defaults.DEFAULT_HIDE_CONSOLE;
+      }
+    }
+    catch(NumberFormatException nfe)
+    {
+      Log.write(1, "hide_console value is invalid. Setting hidden console mode to: Disabled");
+      System.out.println("Warning: hide_console value is invalid. Setting hidden console mode to: Disabled");
+      this.hideConsole = Defaults.DEFAULT_HIDE_CONSOLE;
+    }
+  }
+
   public boolean getDebugMode()
   {
     return debugMode;
@@ -387,6 +435,7 @@ class Config
       setFakeDistro(validateOption(config, "fake_distro"));
       setFakeProcessors(validateOption(config, "fake_processors"));
       setFakeMemory(validateOption(config, "fake_memory"));
+      setHideConsole(validateOption(config, "hide_console"));
       setDebugMode(validateOption(config, "debug_mode"));
     }
     catch(IOException ioe)
@@ -435,12 +484,13 @@ class Config
     System.out.println("SMTP Port: " + getSmtpPort());
     System.out.println("DNS Port: " + getDnsPort());
     System.out.println("HTTP Port: " + getHttpPort());
-    System.out.println("Host Name: " + getHostName());
+    System.out.println("Host Name: " + getShortName());
     System.out.println("Domain Name: " + getDomainName());
     System.out.println("Root Password: " + getMaskedRootPassword() + " (masked)");
     System.out.println("Fake Distro: " + getFakeDistro());
     System.out.println("Fake Processors: " + getFakeProcessors());
     System.out.println("Fake Memory: " + getFakeMemory());
+    System.out.println("Hide Console: " + getHideConsole());
     System.out.println("Debug Mode: " + getDebugMode());
   }
 

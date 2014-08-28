@@ -20,13 +20,19 @@
 
 package me.dilley.linpot;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Scanner;
 
 class Log
 {
+  public static final byte COLS = 80;
+  public static final byte ROWS = 24;
+
   public static void write(int severity, String message)
   {
     SimpleDateFormat timestampFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
@@ -65,6 +71,36 @@ class Log
       System.err.println("Unable to write to linpot.log file:");
       System.err.println(ioe.getMessage());
       System.exit(1);
+    }
+  }
+
+  public static void viewLog()
+  {
+    BufferedReader logFile;
+    Scanner scanner = null;
+    String line;
+    int rowCount = 0;
+
+    try
+    {
+      logFile = new BufferedReader(new FileReader("log/linpot.log"));
+      while((line = logFile.readLine()) != null)
+      {
+        if(rowCount >= ROWS)
+        {
+          scanner = new Scanner(System.in);
+          scanner.nextLine();
+          rowCount = 0;
+        }
+        System.out.println(line);
+        rowCount += 1;
+      }
+      logFile.close();
+    }
+    catch(IOException ioe)
+    {
+      System.err.println("Unable to read linpot.log file:");
+      System.err.println(ioe.getMessage());
     }
   }
 }

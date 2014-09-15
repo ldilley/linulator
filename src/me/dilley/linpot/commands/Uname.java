@@ -143,7 +143,6 @@ public class Uname extends Command
       }
       if((args[i].length() > 2) && (args[i].charAt(0) == '-'))
       {
-        if
         for(int j = 1; j < args[i].length(); j++)
         {
           if(args[i].charAt(j) == arg.charAt(1))

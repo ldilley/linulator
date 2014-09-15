@@ -43,6 +43,28 @@ public class Uname extends Command
         result += " " + OperatingSystem.OPERATING_SYSTEM;
         return result;
       }
+      if(findArg(args, "--help"))
+      {
+        result = "Usage: uname [OPTION]...\n";
+        result += "Print certain system information.  With no OPTION, same as -s.\n\n";
+        result += "  -a, --all                print all information, in the following order,\n";
+        result += "                             except omit -p and -i if unknown:\n";
+        result += "  -s, --kernel-name        print the kernel name\n";
+        result += "  -n, --nodename           print the network node hostname\n";
+        result += "  -r, --kernel-release     print the kernel release\n";
+        result += "  -v, --kernel-version     print the kernel version\n";
+        result += "  -m, --machine            print the machine hardware name\n";
+        result += "  -p, --processor          print the processor type or \"unknown\"\n";
+        result += "  -i, --hardware-platform  print the hardware platform or \"unknown\"\n";
+        result += "  -o, --operating-system   print the operating system\n";
+        result += "      --help     display this help and exit\n";
+        result += "      --version  output version information and exit\n\n";
+        result += "Report uname bugs to bug-coreutils@gnu.org\n";
+        result += "GNU coreutils home page: <http://www.gnu.org/software/coreutils/>\n";
+        result += "General help using GNU software: <http://www.gnu.org/gethelp/>\n";
+        result += "For complete documentation, run: info coreutils 'uname invocation'\n";
+        return result;
+      }
       if(findArg(args, "--version"))
       {
         result = "uname (GNU coreutils) 8.4\nCopyright (C) 2010 Free Software Foundation, Inc.\n";
@@ -112,12 +134,24 @@ public class Uname extends Command
   {
     boolean hasArg = false;
 
-    for(int i = 0; i < args.length; i++)
+    for(int i = 1; i < args.length; i++)
     {
       if(args[i].equals(arg))
       {
         hasArg = true;
         break;
+      }
+      if((args[i].length() > 2) && (args[i].charAt(0) == '-'))
+      {
+        if
+        for(int j = 1; j < args[i].length(); j++)
+        {
+          if(args[i].charAt(j) == arg.charAt(1))
+          {
+            hasArg = true;
+            break;
+          }
+        }
       }
     }
 

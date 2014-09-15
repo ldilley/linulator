@@ -24,7 +24,6 @@ import me.dilley.linpot.commands.*;
 
 import java.util.HashMap;
 
-// ToDo: This class needs to be thread safe
 class Shell
 {
   private static HashMap<String, Command> hashMap = new HashMap<String, Command>();

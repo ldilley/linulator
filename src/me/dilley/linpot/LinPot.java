@@ -33,7 +33,13 @@ class LinPot
   public static void main(String[] args)
   {
     System.out.println(VERSION);
+    System.out.println("Enforcing security policy...");
+    System.setProperty("java.security.policy", "linpot.policy");
+    SecurityManager securityManager = new SecurityManager();
+    System.setSecurityManager(securityManager);
+    //securityManager.checkExec("/bin/ls"); // prove we cannot execute commands on the host OS
     Log.write(0, VERSION);
+    Log.write(0, "Security policy enforced.");
     System.out.println("Parsing configuration file...");
     Log.write(0, "Parsing configuration file...");
     Config config = new Config();

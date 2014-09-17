@@ -53,6 +53,7 @@ class LinPot
     Log.write(0, "Populating commands...");
     Shell.populateCommands();
     // ToDo: Load filesystem data from Derby database
+    Database.connect();
     if(config.getTelnetPort() != 0)
     {
       System.out.println("Starting telnet server...");
@@ -115,6 +116,7 @@ class LinPot
           System.out.println("Shutting down...");
           Log.write(0, "Shutting down...");
           // ToDo: stop service threads and commit database changes
+          Database.shutdown();
           System.exit(0);
           break;
         default:

@@ -96,8 +96,8 @@ Enable the IP filter:
 Confirm the rules are in memory:  
 *ipnat -l*
 
-6.) Launch LinPot (where <X.X.X> is the version and <YYYYMMDD> is the build date):  
-*java -jar linpot-<X.X.X>-<YYYYMMDD>.jar*
+6.) Launch LinPot (where X.X.X is the version and YYYYMMDD is the build date):  
+*java -jar linpot-X.X.X-YYYYMMDD.jar*
 
 7.) Enjoy!
 

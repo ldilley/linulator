@@ -31,20 +31,25 @@ import java.util.Properties;
 // ToDo: This class needs to be thread safe
 class Database
 {
-  private String framework = "embedded";
-  private String protocol = "jdbc:derby:";
-  private Connection connection = null;
+  private static String driver = "org.apache.derby.jdbc.EmbeddedDriver";
+  private static String protocol = "jdbc:derby:";
+  private static String databaseName = "linpot";
+  private static Connection connection = null;
   private PreparedStatement preparedStatement;
   private Statement statement;
   private ResultSet resultSet = null;
-  private String databaseName = "linpot";
-  private Properties properties = new Properties();
+  private static Properties properties = new Properties();
 
-  public void connect()
+  public static void connect()
   {
     try
     {
-      connection = DriverManager.getConnection(protocol + databaseName + ";create=false", properties);
+      System.setProperty("derby.system.home", System.getProperty("user.dir"));
+      System.setProperty("derby.stream.error.file", "log/database.log");
+      System.setProperty("derby.language.logStatementText", "true");
+      connection = DriverManager.getConnection(protocol + databaseName + ";create=true", properties);
+      Log.write(0, "Connected to database successfully.");
+      System.out.println("Connected to database successfully.");
     }
     catch(SQLException sqle)
     {
@@ -52,14 +57,17 @@ class Database
       Log.write(2, sqle.getMessage());
       System.err.println("Critical: Unable to connect to database.");
       System.err.println(sqle.getMessage());
+      if(connection == null)
+        System.exit(1);
     }
   }
 
-  public void disconnect()
+  public static void disconnect()
   {
     try
     {
       connection.close();
+      DriverManager.getConnection("jdbc:derby:;shutdown=true");
     }
     catch(SQLException sqle)
     {
@@ -70,8 +78,31 @@ class Database
     }
   }
 
-  public void query(String query)
+  public static void query(String query)
   {
     //
+  }
+
+  public static void shutdown()
+  {
+    try
+    {
+      DriverManager.getConnection("jdbc:derby:;shutdown=true");
+    }
+    catch(SQLException sqle)
+    {
+      if(((sqle.getErrorCode() == 50000) && ("XJ015".equals(sqle.getSQLState()))))
+      {
+        Log.write(0, "Database was shut down properly.");
+        System.out.println("Database was shut down properly.");
+      }
+      else
+      {
+        Log.write(2, "Database could not be shut down properly.");
+        Log.write(2, sqle.getMessage());
+        System.err.println("Critical: Database could not be shut down properly.");
+        System.err.println(sqle.getMessage());
+      }
+    }
   }
 }

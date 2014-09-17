@@ -22,12 +22,15 @@
   </target>
   <target name="dist" depends="compile" description="creates jarball for distribution">
     <mkdir dir="${dist}" />
+    <mkdir dir="${dist}/lib" />
     <mkdir dir="${dist}/log" />
     <copy file="linpot.properties" todir="${dist}" />
     <copy file="linpot.policy" todir="${dist}" />
+    <copy file="lib/derby.jar" todir="${dist}/lib" />
     <jar jarfile="${dist}/linpot-${version}-${DSTAMP}.jar" basedir="${build}">
       <manifest>
         <attribute name="Main-Class" value="me/dilley/linpot/LinPot" />
+        <attribute name="Class-Path" value="lib/derby.jar" />
       </manifest>
     </jar>
   </target>

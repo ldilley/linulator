@@ -17,4 +17,24 @@ grant
 
   // Uncomment the line below to allow users to connect outside of LinPot
   //permission java.net.SocketPermission "*", "connect";
+
+  // Derby stuff
+  permission java.io.FilePermission "derby.log", "read, write";
+  permission java.io.FilePermission "${user.dir}/log/database.log", "read, write";
+  permission java.io.FilePermission "${user.dir}", "read";
+  permission java.io.FilePermission "${user.dir}/linpot", "read, write";
+  permission java.io.FilePermission "${user.dir}/linpot/-", "read, write, delete";
+  permission java.lang.RuntimePermission "getProtectionDomain";
+  permission java.util.PropertyPermission "user.dir", "read";
+  permission java.util.PropertyPermission "derby.system.home", "read, write";
+  permission java.util.PropertyPermission "derby.stream.error.file", "read, write";
+  permission java.util.PropertyPermission "derby.language.logStatementText", "read, write";
+  permission java.util.PropertyPermission "derby.authentication.provider", "read";
+  permission java.util.PropertyPermission "derby.authentication.builtin.algorithm", "read";
+  permission java.util.PropertyPermission "derby.connection.requireAuthentication", "read";
+  permission java.util.PropertyPermission "derby.storage.useDefaultFilePermissions", "read";
+  permission java.util.PropertyPermission "derby.database.fullAccessUsers", "read";
+  permission java.util.PropertyPermission "derby.database.readOnlyAccessUsers", "read";
+  permission java.util.PropertyPermission "derby.database.defaultConnectionMode", "read";
+  permission java.util.PropertyPermission "derby.database.sqlAuthorization", "read";
 };

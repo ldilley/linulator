@@ -1,7 +1,7 @@
 /*
- * LinPot - A Linux honeypot
+ * Linulator - The Linux Simulator
  * Copyright (C) 2014 Lloyd Dilley
- * http://www.dilley.me/
+ * http://www.linulator.org/
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package me.dilley.linpot;
+package org.linulator;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -62,13 +62,13 @@ class Log
 
     try
     {
-      logFile = new FileWriter("log/linpot.log", true);
+      logFile = new FileWriter("log${file.separator}linulator.log", true);
       logFile.write(logEntry);
       logFile.close();
     }
     catch(IOException ioe)
     {
-      System.err.println("Unable to write to linpot.log file:");
+      System.err.println("Unable to write to linulator.log file:");
       System.err.println(ioe.getMessage());
       System.exit(1);
     }
@@ -83,7 +83,7 @@ class Log
 
     try
     {
-      logFile = new BufferedReader(new FileReader("log/linpot.log"));
+      logFile = new BufferedReader(new FileReader("log${file.separator}linulator.log"));
       while((line = logFile.readLine()) != null)
       {
         if(rowCount >= ROWS)
@@ -99,7 +99,7 @@ class Log
     }
     catch(IOException ioe)
     {
-      System.err.println("Unable to read linpot.log file:");
+      System.err.println("Unable to read linulator.log file:");
       System.err.println(ioe.getMessage());
     }
   }

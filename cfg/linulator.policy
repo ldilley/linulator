@@ -4,10 +4,10 @@ grant
   //permission java.security.AllPermission;
 
   // Needed for logging
-  permission java.io.FilePermission "log/linpot.log", "read, write";
+  permission java.io.FilePermission "log${file.separator}linulator.log", "read, write";
 
   // Needed to parse the configuration file
-  permission java.io.FilePermission "linpot.properties", "read";
+  permission java.io.FilePermission "cfg${file.separator}linulator.properties", "read";
 
   // Since the address and ports are configurable, allow all addresses and ports for simplicity
   permission java.net.SocketPermission "*", "accept, listen, resolve";
@@ -15,15 +15,15 @@ grant
   // Create separate rules for each service and comment the wildcard line above for more control
   //permission java.net.SocketPermission "127.0.0.1:10023", "accept, listen, resolve";
 
-  // Uncomment the line below to allow users to connect outside of LinPot
+  // Uncomment the line below to allow users to connect outside of Linulator
   //permission java.net.SocketPermission "*", "connect";
 
   // Derby stuff
   permission java.io.FilePermission "derby.log", "read, write";
-  permission java.io.FilePermission "${user.dir}/log/database.log", "read, write";
+  permission java.io.FilePermission "${user.dir}${file.separator}log${file.separator}database.log", "read, write";
   permission java.io.FilePermission "${user.dir}", "read";
-  permission java.io.FilePermission "${user.dir}/linpot", "read, write";
-  permission java.io.FilePermission "${user.dir}/linpot/-", "read, write, delete";
+  permission java.io.FilePermission "${user.dir}${file.separator}linulator", "read, write";
+  permission java.io.FilePermission "${user.dir}${file.separator}linulator${file.separator}-", "read, write, delete";
   permission java.lang.RuntimePermission "getProtectionDomain";
   permission java.util.PropertyPermission "user.dir", "read";
   permission java.util.PropertyPermission "derby.system.home", "read, write";

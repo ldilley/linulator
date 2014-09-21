@@ -1,7 +1,7 @@
 /*
- * LinPot - A Linux honeypot
+ * Linulator - The Linux Simulator
  * Copyright (C) 2014 Lloyd Dilley
- * http://www.dilley.me/
+ * http://www.linulator.org/
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package me.dilley.linpot;
+package org.linulator;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -416,7 +416,7 @@ class Config
 
     try
     {
-      inFile = new FileInputStream("linpot.properties");
+      inFile = new FileInputStream("cfg${file.separator}linulator.properties");
       config.load(inFile);
 
       setListenAddress(validateOption(config, "listen_address"));
@@ -440,7 +440,7 @@ class Config
     }
     catch(IOException ioe)
     {
-      System.err.println("Critical: Unable to parse linpot.properties:");
+      System.err.println("Critical: Unable to parse linulator.properties:");
       System.err.println(ioe.getMessage());
       System.exit(1);
     }
@@ -565,8 +565,8 @@ class Config
 
     if(matchCount > 1)
     {
-      Log.write(2, "Modify the " + option + " value in linpot.properties. The port number is not unique: " + port);
-      System.err.println("Critical: Modify the " + option + " value in linpot.properties. The port number is not unique: " + port);
+      Log.write(2, "Modify the " + option + " value in linulator.properties. The port number is not unique: " + port);
+      System.err.println("Critical: Modify the " + option + " value in linulator.properties. The port number is not unique: " + port);
       System.exit(1);
     }
   }

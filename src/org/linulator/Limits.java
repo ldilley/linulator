@@ -1,7 +1,7 @@
 /*
- * LinPot - A Linux honeypot
+ * Linulator - The Linux Simulator
  * Copyright (C) 2014 Lloyd Dilley
- * http://www.dilley.me/
+ * http://www.linulator.org/
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,31 +18,21 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package me.dilley.linpot;
+package org.linulator;
 
-import me.dilley.linpot.commands.*;
-
-import java.util.HashMap;
-
-class Shell
+class Limits
 {
-  private static HashMap<String, Command> hashMap = new HashMap<String, Command>();
+  public static final int MIN_PORT = 0;
+  public static final int MAX_PORT = 65535;
 
-  public static void populateCommands()
-  {
-    Uname uname = new Uname();
-    hashMap.put("uname", uname);
-  }
+  public static final byte MIN_PROCESSORS = 1;
+  public static final byte MAX_PROCESSORS = 16;
 
-  public static String execute(String[] args)
-  {
-    String result = null;
+  public static final int MIN_MEMORY = 1024;
+  public static final int MAX_MEMORY = 32768;
 
-    Command command = hashMap.get(args[0]);
+  public static final short MAX_HOST_NAME_LENGTH = 255; // returned by "getconf HOST_NAME_MAX"
 
-    if(command != null)
-      result = command.execute(args);
-
-    return result;
-  }
+  public static final byte MAX_USER_NAME_LENGTH = 32;
+  public static final byte MAX_PASSWORD_LENGTH = 32;
 }

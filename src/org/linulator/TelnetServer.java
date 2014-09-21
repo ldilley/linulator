@@ -1,7 +1,7 @@
 /*
- * LinPot - A Linux honeypot
+ * Linulator - The Linux Simulator
  * Copyright (C) 2014 Lloyd Dilley
- * http://www.dilley.me/
+ * http://www.linulator.org/
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package me.dilley.linpot;
+package org.linulator;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

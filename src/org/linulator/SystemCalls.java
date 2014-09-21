@@ -1,7 +1,7 @@
 /*
- * LinPot - A Linux honeypot
+ * Linulator - The Linux Simulator
  * Copyright (C) 2014 Lloyd Dilley
- * http://www.dilley.me/
+ * http://www.linulator.org/
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package me.dilley.linpot;
+package org.linulator;
 
 import java.util.Arrays;
 
 /*
  * This class emulates Linux syscalls for the x86-64 architecture.
- * I understand that the method names below are not consistent with other methods in LinPot (nor do they follow
+ * I understand that the method names below are not consistent with other methods in Linulator (nor do they follow
  * Sun's recommendations.) I am attempting to preserve the look of the Linux API. I *may* standardize the names
  * at some point. For example, "sys_write" might become "sysWrite" or simply "write".
  */

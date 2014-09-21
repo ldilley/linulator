@@ -1,7 +1,7 @@
 /*
- * LinPot - A Linux honeypot
+ * Linulator - The Linux Simulator
  * Copyright (C) 2014 Lloyd Dilley
- * http://www.dilley.me/
+ * http://www.linulator.org/
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,14 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package me.dilley.linpot;
+package org.linulator;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-class LinPot
+class Linulator
 {
-  public static final String VERSION = "LinPot v0.1";
+  public static final String VERSION = "Linulator v0.1";
   static Scanner scanner = null;
   static String input = null;
   static int option = 0;
@@ -34,7 +34,7 @@ class LinPot
   {
     System.out.println(VERSION);
     System.out.println("Enforcing security policy...");
-    System.setProperty("java.security.policy", "linpot.policy");
+    System.setProperty("java.security.policy", "cfg${file.separator}linulator.policy");
     SecurityManager securityManager = new SecurityManager();
     System.setSecurityManager(securityManager);
     //securityManager.checkExec("/bin/ls"); // prove we cannot execute commands on the host OS
@@ -62,8 +62,8 @@ class LinPot
       new Thread(telnetServer).start();
     }
 
-    System.out.println("LinPot started successfully.");
-    Log.write(0, "LinPot started successfully.");
+    System.out.println("Linulator started successfully.");
+    Log.write(0, "Linulator started successfully.");
 
     while(true)
     {
@@ -75,7 +75,7 @@ class LinPot
         System.out.println("2.) View logs");
         System.out.println("3.) Freeze environment");
         System.out.println("4.) Show configuration");
-        System.out.println("5.) Shutdown LinPot\n");
+        System.out.println("5.) Shutdown Linulator\n");
         System.out.print("> ");
 
         scanner = new Scanner(System.in);

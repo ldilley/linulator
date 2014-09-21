@@ -1,7 +1,7 @@
 /*
- * LinPot - A Linux honeypot
+ * Linulator - The Linux Simulator
  * Copyright (C) 2014 Lloyd Dilley
- * http://www.dilley.me/
+ * http://www.linulator.org/
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package me.dilley.linpot;
+package org.linulator;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -33,7 +33,7 @@ class Database
 {
   private static String driver = "org.apache.derby.jdbc.EmbeddedDriver";
   private static String protocol = "jdbc:derby:";
-  private static String databaseName = "linpot";
+  private static String databaseName = "linulator";
   private static Connection connection = null;
   private PreparedStatement preparedStatement;
   private Statement statement;
@@ -45,7 +45,7 @@ class Database
     try
     {
       System.setProperty("derby.system.home", System.getProperty("user.dir"));
-      System.setProperty("derby.stream.error.file", "log/database.log");
+      System.setProperty("derby.stream.error.file", "log${file.separator}database.log");
       System.setProperty("derby.language.logStatementText", "true");
       connection = DriverManager.getConnection(protocol + databaseName + ";create=true", properties);
       Log.write(0, "Connected to database successfully.");

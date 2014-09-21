@@ -57,10 +57,11 @@ body {
 }
 
 a {
-  color: #d5000d;
+  color: #007edf;
 }
 a:hover {
-  color: #c5000c;
+  color: #007edf;
+  decoration: underline;
 }
 
 header {
@@ -322,6 +323,7 @@ footer a {
 }
 footer a:hover {
   color: #444;
+  decoration: underline;
 }
 
 /* MISC */

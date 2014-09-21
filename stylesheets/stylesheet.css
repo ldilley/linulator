@@ -61,7 +61,7 @@ a {
 }
 a:hover {
   color: #007edf;
-  decoration: underline;
+  text-decoration: underline;
 }
 
 header {
@@ -323,7 +323,7 @@ footer a {
 }
 footer a:hover {
   color: #444;
-  decoration: underline;
+  text-decoration: underline;
 }
 
 /* MISC */

@@ -34,7 +34,7 @@ class Linulator
   {
     System.out.println(VERSION);
     System.out.println("Enforcing security policy...");
-    System.setProperty("java.security.policy", "cfg${file.separator}linulator.policy");
+    System.setProperty("java.security.policy", "cfg" + System.getProperty("file.separator") + "linulator.policy");
     SecurityManager securityManager = new SecurityManager();
     System.setSecurityManager(securityManager);
     //securityManager.checkExec("/bin/ls"); // prove we cannot execute commands on the host OS

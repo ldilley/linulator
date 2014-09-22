@@ -62,7 +62,7 @@ class Log
 
     try
     {
-      logFile = new FileWriter("log${file.separator}linulator.log", true);
+      logFile = new FileWriter("log" + System.getProperty("file.separator") + "linulator.log", true);
       logFile.write(logEntry);
       logFile.close();
     }
@@ -83,7 +83,7 @@ class Log
 
     try
     {
-      logFile = new BufferedReader(new FileReader("log${file.separator}linulator.log"));
+      logFile = new BufferedReader(new FileReader("log" + System.getProperty("file.separator") + "linulator.log"));
       while((line = logFile.readLine()) != null)
       {
         if(rowCount >= ROWS)

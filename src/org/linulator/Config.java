@@ -416,7 +416,7 @@ class Config
 
     try
     {
-      inFile = new FileInputStream("cfg${file.separator}linulator.properties");
+      inFile = new FileInputStream("cfg" + System.getProperty("file.separator") + "linulator.properties");
       config.load(inFile);
 
       setListenAddress(validateOption(config, "listen_address"));

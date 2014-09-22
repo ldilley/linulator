@@ -45,7 +45,7 @@ class Database
     try
     {
       System.setProperty("derby.system.home", System.getProperty("user.dir"));
-      System.setProperty("derby.stream.error.file", "log${file.separator}database.log");
+      System.setProperty("derby.stream.error.file", "log" + System.getProperty("file.separator") + "database.log");
       System.setProperty("derby.language.logStatementText", "true");
       connection = DriverManager.getConnection(protocol + databaseName + ";create=true", properties);
       Log.write(0, "Connected to database successfully.");

@@ -39,7 +39,8 @@
   </target>
   <target name="clean" description="cleans up">
     <delete>
-      <fileset dir="${src}/${pkg}" includes="*.class" />
+      <fileset dir="${src}${file.separator}${pkg}" includes="*.class" />
+      <fileset dir="tools${file.separator}" includes="*.class" />
     </delete>
     <delete dir="${build}" />
     <delete dir="${dist}" />

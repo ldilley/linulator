@@ -35,4 +35,6 @@ class Limits
 
   public static final byte MAX_USER_NAME_LENGTH = 32;
   public static final byte MAX_PASSWORD_LENGTH = 32;
+
+  public static final short MAX_SMALL_SERVER_PACKET_SIZE = 2048;
 }

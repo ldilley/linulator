@@ -23,6 +23,8 @@ package org.linulator;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.SocketException;
 
 class Network
@@ -30,7 +32,6 @@ class Network
   public static String receive(BufferedReader input)
   {
     String data = null;
-
     try
     {
       data = input.readLine();
@@ -61,6 +62,10 @@ class Network
       }
       output.flush();
     }
+    catch(NullPointerException npe)
+    {
+      return -1; // thread/client connection went away
+    }
     catch(SocketException se)
     {
       se.getMessage();
@@ -71,5 +76,31 @@ class Network
     }
 
     return bytesSent;
+  }
+
+  public static void receiveFrom(DatagramSocket serverSocket, DatagramPacket packet)
+  {
+    try
+    {
+      serverSocket.receive(packet);
+    }
+    catch(IOException ioe)
+    {
+      ioe.printStackTrace();
+    }
+  }
+
+  public static int sendTo(DatagramSocket serverSocket, DatagramPacket packet)
+  {
+    try
+    {
+      serverSocket.send(packet);
+    }
+    catch(IOException ioe)
+    {
+      ioe.printStackTrace();
+    }
+
+    return packet.getLength(); // bytes sent
   }
 }

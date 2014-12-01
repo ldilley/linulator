@@ -15,7 +15,7 @@ grant
   // Create separate rules for each service and comment the wildcard line above for more control
   //permission java.net.SocketPermission "127.0.0.1:10023", "accept, listen, resolve";
 
-  // Uncomment the line below to allow users to connect outside of Linulator
+  // Uncomment the line below to allow outbound connections from Linulator (this is required for some services, but is less secure)
   //permission java.net.SocketPermission "*", "connect";
 
   // Derby stuff

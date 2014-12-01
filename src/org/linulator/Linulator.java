@@ -54,6 +54,15 @@ class Linulator
     Shell.populateCommands();
     // ToDo: Load filesystem data from Derby database
     Database.connect();
+    if(config.getEchoPort() != 0)
+    {
+      System.out.println("Starting echo server...");
+      Log.write(0, "Starting echo server...");
+      TcpServer TcpEchoServer = new TcpServer(config.getListenAddress(), config.getEchoPort(), "echo");
+      new Thread(TcpEchoServer).start();
+      UdpServer UdpEchoServer = new UdpServer(config.getListenAddress(), config.getEchoPort(), "echo");
+      new Thread(UdpEchoServer).start();
+    }
     if(config.getTelnetPort() != 0)
     {
       System.out.println("Starting telnet server...");

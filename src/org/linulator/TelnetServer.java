@@ -56,8 +56,8 @@ class TelnetServer implements Runnable
       String result = null;
       byte attempts = 0;
       char sigil = '$';
-      input=new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-      output=new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+      input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+      output = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
       ios = new DataInputStream(clientSocket.getInputStream());
       dos = new DataOutputStream(clientSocket.getOutputStream());
 

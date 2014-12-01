@@ -21,20 +21,21 @@
 package org.linulator;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
 
-class TcpServer implements Runnable
+class UdpServer implements Runnable
 {
-  protected ServerSocket serverSocket = null;
+  protected DatagramSocket serverSocket = null;
   protected boolean isStopped = false;
   protected Thread runningThread = null;
   protected String address = null;
   protected int port = 0;
   protected String service = null;
 
-  public TcpServer(String address, int port, String service)
+  public UdpServer(String address, int port, String service)
   {
     this.address = address;
     this.port = port;
@@ -51,9 +52,9 @@ class TcpServer implements Runnable
     try
     {
       if(this.address.equals("*"))
-        this.serverSocket = new ServerSocket(this.port);
+        this.serverSocket = new DatagramSocket(this.port);
       else
-        this.serverSocket = new ServerSocket(this.port, 0, InetAddress.getByName(this.address));
+        this.serverSocket = new DatagramSocket(this.port, InetAddress.getByName(this.address));
     }
     catch(IOException ioe)
     {
@@ -66,11 +67,14 @@ class TcpServer implements Runnable
 
     while(!isStopped)
     {
-      Socket clientSocket = null;
+      byte[] buffer = null;
+      DatagramPacket packet = null;
 
       try
       {
-        clientSocket = this.serverSocket.accept();
+        buffer = new byte[Limits.MAX_SMALL_SERVER_PACKET_SIZE];
+        packet = new DatagramPacket(buffer, buffer.length);
+        this.serverSocket.receive(packet);
       }
       catch(IOException ioe)
       {
@@ -82,14 +86,12 @@ class TcpServer implements Runnable
           System.err.println(ioe.getMessage());
           return;
         }
-        Log.write(1, "Error accepting client connection:");
+        Log.write(1, "Error receiving packet:");
         Log.write(1, ioe.getMessage());
       }
 
       if(this.service.equals("echo"))
-        new Thread(new EchoServer(clientSocket)).start();
-      if(this.service.equals("telnet"))
-        new Thread(new TelnetServer(clientSocket)).start();
+        new Thread(new EchoServer(serverSocket, buffer, packet)).start();
     }
 
     Log.write(0, this.service + " server stopped.");
@@ -104,14 +106,9 @@ class TcpServer implements Runnable
   {
     this.isStopped = true;
 
-    try
-    {
-      this.serverSocket.close();
-    }
-    catch(IOException ioe)
-    {
+    if(this.serverSocket == null || this.serverSocket.isClosed())
       Log.write(2, "Unable to close " + this.service + " server.");
-      Log.write(2, ioe.getMessage());
-    }
+    else
+      this.serverSocket.close();
   }
 }

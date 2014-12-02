@@ -23,6 +23,7 @@ package org.linulator;
 class Defaults
 {
   public static final int DEFAULT_ECHO_PORT = 7;
+  public static final int DEFAULT_DISCARD_PORT = 9;
   public static final int DEFAULT_DAYTIME_PORT = 13;
   public static final int DEFAULT_CHARGEN_PORT = 19;
   public static final int DEFAULT_TIME_PORT = 37;
@@ -32,6 +33,7 @@ class Defaults
   public static final int DEFAULT_SMTP_PORT = 25;
   public static final int DEFAULT_DNS_PORT = 59;
   public static final int DEFAULT_HTTP_PORT = 80;
+  public static final int DEFAULT_NTP_PORT = 123;
   public static final byte DEFAULT_PROCESSORS = 8;
   public static final int DEFAULT_MEMORY = 8192;
   public static final String DEFAULT_LISTEN_ADDRESS = "*";

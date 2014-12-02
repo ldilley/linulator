@@ -29,6 +29,7 @@ class Config
 {
   private String listenAddress;
   private int echoPort;
+  private int discardPort;
   private int daytimePort;
   private int chargenPort;
   private int timePort;
@@ -38,6 +39,7 @@ class Config
   private int smtpPort;
   private int dnsPort;
   private int httpPort;
+  private int ntpPort;
   private String hostName;
   private String shortName;
   private String domainName;
@@ -72,6 +74,16 @@ class Config
   public void setEchoPort(String echoPort)
   {
     this.echoPort = validatePort(echoPort, this.echoPort, "echo", "echo_port");
+  }
+
+  public int getDiscardPort()
+  {
+    return discardPort;
+  }
+
+  public void setDiscardPort(String discardPort)
+  {
+    this.discardPort = validatePort(discardPort, this.discardPort, "discard", "discard_port");
   }
 
   public int getDaytimePort()
@@ -162,6 +174,16 @@ class Config
   public void setHttpPort(String httpPort)
   {
     this.httpPort = validatePort(httpPort, this.httpPort, "HTTP", "http_port");
+  }
+
+  public int getNtpPort()
+  {
+    return ntpPort;
+  }
+
+  public void setNtpPort(String ntpPort)
+  {
+    this.ntpPort = validatePort(ntpPort, this.ntpPort, "NTP", "ntp_port");
   }
 
   public String getHostName()
@@ -406,7 +428,7 @@ class Config
       Log.write(1, "debug_mode value is invalid. Setting debug mode to: Enabled");
       System.out.println("Warning: debug_mode value is invalid. Setting debug mode to: Enabled");
       this.debugMode = Defaults.DEFAULT_DEBUG_MODE;
-    }      
+    }
   }
 
   public void parseConfig()
@@ -421,6 +443,7 @@ class Config
 
       setListenAddress(validateOption(config, "listen_address"));
       setEchoPort(validateOption(config, "echo_port"));
+      setDiscardPort(validateOption(config, "discard_port"));
       setDaytimePort(validateOption(config, "daytime_port"));
       setChargenPort(validateOption(config, "chargen_port"));
       setTimePort(validateOption(config, "time_port"));
@@ -430,6 +453,7 @@ class Config
       setSmtpPort(validateOption(config, "smtp_port"));
       setDnsPort(validateOption(config, "dns_port"));
       setHttpPort(validateOption(config, "http_port"));
+      setNtpPort(validateOption(config, "ntp_port"));
       setHostName(validateOption(config, "host_name"));
       setRootPassword(validateOption(config, "root_password"));
       setFakeDistro(validateOption(config, "fake_distro"));
@@ -460,6 +484,7 @@ class Config
     }
 
     validateUniquePorts(echoPort, "echo_port");
+    validateUniquePorts(discardPort, "discard_port");
     validateUniquePorts(daytimePort, "daytime_port");
     validateUniquePorts(chargenPort, "chargen_port");
     validateUniquePorts(timePort, "time_port");
@@ -469,12 +494,14 @@ class Config
     validateUniquePorts(smtpPort, "smtp_port");
     validateUniquePorts(dnsPort, "dns_port");
     validateUniquePorts(httpPort, "http_port");
+    validateUniquePorts(ntpPort, "ntp_port");
   }
 
   public void showConfig()
   {
     System.out.println("Listen Address: " + getListenAddress());
     System.out.println("Echo Port: " + getEchoPort());
+    System.out.println("Discard Port: " + getDiscardPort());
     System.out.println("Daytime Port: " + getDaytimePort());
     System.out.println("Chargen Port: " + getChargenPort());
     System.out.println("Time Port: " + getTimePort());
@@ -484,6 +511,7 @@ class Config
     System.out.println("SMTP Port: " + getSmtpPort());
     System.out.println("DNS Port: " + getDnsPort());
     System.out.println("HTTP Port: " + getHttpPort());
+    System.out.println("NTP Port: " + getNtpPort());
     System.out.println("Host Name: " + getShortName());
     System.out.println("Domain Name: " + getDomainName());
     System.out.println("Root Password: " + getMaskedRootPassword() + " (masked)");
@@ -543,6 +571,8 @@ class Config
     {
       if(port == echoPort)
         matchCount++;
+      if(port == discardPort)
+        matchCount++;
       if(port == daytimePort)
         matchCount++;
       if(port == chargenPort)
@@ -560,6 +590,8 @@ class Config
       if(port == dnsPort)
         matchCount++;
       if(port == httpPort)
+        matchCount++;
+      if(port == ntpPort)
         matchCount++;
     }
 

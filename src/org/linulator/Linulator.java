@@ -63,6 +63,33 @@ class Linulator
       UdpServer UdpEchoServer = new UdpServer(config.getListenAddress(), config.getEchoPort(), "echo");
       new Thread(UdpEchoServer).start();
     }
+    if(config.getDiscardPort() != 0)
+    {
+      System.out.println("Starting discard server...");
+      Log.write(0, "Starting discard server...");
+      TcpServer TcpDiscardServer = new TcpServer(config.getListenAddress(), config.getDiscardPort(), "discard");
+      new Thread(TcpDiscardServer).start();
+      UdpServer UdpDiscardServer = new UdpServer(config.getListenAddress(), config.getDiscardPort(), "discard");
+      new Thread(UdpDiscardServer).start();
+    }
+    if(config.getDaytimePort() != 0)
+    {
+      System.out.println("Starting daytime server...");
+      Log.write(0, "Starting daytime server...");
+      TcpServer TcpDaytimeServer = new TcpServer(config.getListenAddress(), config.getDaytimePort(), "daytime");
+      new Thread(TcpDaytimeServer).start();
+      UdpServer UdpDaytimeServer = new UdpServer(config.getListenAddress(), config.getDaytimePort(), "daytime");
+      new Thread(UdpDaytimeServer).start();
+    }
+    if(config.getTimePort() != 0)
+    {
+      System.out.println("Starting time server...");
+      Log.write(0, "Starting time server...");
+      TcpServer TcpTimeServer = new TcpServer(config.getListenAddress(), config.getTimePort(), "time");
+      new Thread(TcpTimeServer).start();
+      UdpServer UdpTimeServer = new UdpServer(config.getListenAddress(), config.getTimePort(), "time");
+      new Thread(UdpTimeServer).start();
+    }
     if(config.getTelnetPort() != 0)
     {
       System.out.println("Starting telnet server...");

@@ -92,6 +92,12 @@ class UdpServer implements Runnable
 
       if(this.service.equals("echo"))
         new Thread(new EchoServer(serverSocket, buffer, packet)).start();
+      if(this.service.equals("discard"))
+        new Thread(new DiscardServer(serverSocket, buffer, packet)).start();
+      if(this.service.equals("daytime"))
+        new Thread(new DaytimeServer(serverSocket, buffer, packet)).start();
+      if(this.service.equals("time"))
+        new Thread(new TimeServer(serverSocket, buffer, packet)).start();
     }
 
     Log.write(0, this.service + " server stopped.");

@@ -29,7 +29,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.Socket;
 
-class EchoServer implements Runnable
+class DiscardServer implements Runnable
 {
   protected byte[] buffer = null;
   protected boolean isUdp = false;
@@ -40,14 +40,14 @@ class EchoServer implements Runnable
   protected BufferedWriter output = null;
 
   // TCP
-  public EchoServer(Socket clientSocket)
+  public DiscardServer(Socket clientSocket)
   {
     isUdp = false;
     this.clientSocket = clientSocket;
   }
 
   // UDP
-  public EchoServer(DatagramSocket serverSocket, byte[] buffer, DatagramPacket packet)
+  public DiscardServer(DatagramSocket serverSocket, byte[] buffer, DatagramPacket packet)
   {
     isUdp = true;
     this.serverSocket = serverSocket;
@@ -64,29 +64,26 @@ class EchoServer implements Runnable
         input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         output = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
 
-        Log.write(0, "EchoServer: TCP connection received from " + clientSocket.getInetAddress().getHostAddress() + ':' + clientSocket.getPort() + '.');
+        Log.write(0, "DiscardServer: TCP connection received from " + clientSocket.getInetAddress().getHostAddress() + ':' + clientSocket.getPort() + '.');
 
         while(clientSocket != null && !clientSocket.isClosed())
         {
           String message = Network.receive(input);
           if(message == null) // connection lost
             break;
-          Network.send(output, message, true);
         }
 
         input.close();
         output.close();
-        Log.write(0, "EchoServer: TCP connection to " + clientSocket.getInetAddress().getHostAddress() + ':' + clientSocket.getPort() + " closed.");
+        Log.write(0, "DiscardServer: TCP connection to " + clientSocket.getInetAddress().getHostAddress() + ':' + clientSocket.getPort() + " closed.");
       }
       else
       {
-        Log.write(0, "EchoServer: UDP packet received from " + packet.getAddress().getHostAddress() + ':' + packet.getPort() + '.');
-        Network.sendTo(serverSocket, packet); // send back initial echo from caller
+        Log.write(0, "DiscardServer: UDP packet received from " + packet.getAddress().getHostAddress() + ':' + packet.getPort() + '.');
 
         while(true)
         {
           Network.receiveFrom(serverSocket, packet);
-          Network.sendTo(serverSocket, packet);
         }
       }
     }

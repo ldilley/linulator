@@ -96,6 +96,8 @@ class UdpServer implements Runnable
         new Thread(new DiscardServer(serverSocket, buffer, packet)).start();
       if(this.service.equals("daytime"))
         new Thread(new DaytimeServer(serverSocket, buffer, packet)).start();
+      if(this.service.equals("chargen"))
+        new Thread(new ChargenServer(serverSocket, buffer, packet)).start();
       if(this.service.equals("time"))
         new Thread(new TimeServer(serverSocket, buffer, packet)).start();
     }

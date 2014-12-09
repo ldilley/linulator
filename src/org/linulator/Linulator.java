@@ -81,6 +81,15 @@ class Linulator
       UdpServer UdpDaytimeServer = new UdpServer(config.getListenAddress(), config.getDaytimePort(), "daytime");
       new Thread(UdpDaytimeServer).start();
     }
+    if(config.getChargenPort() != 0)
+    {
+      System.out.println("Starting chargen server...");
+      Log.write(0, "Starting chargen server...");
+      TcpServer TcpChargenServer = new TcpServer(config.getListenAddress(), config.getChargenPort(), "chargen");
+      new Thread(TcpChargenServer).start();
+      UdpServer UdpChargenServer = new UdpServer(config.getListenAddress(), config.getChargenPort(), "chargen");
+      new Thread(UdpChargenServer).start();
+    }
     if(config.getTimePort() != 0)
     {
       System.out.println("Starting time server...");

@@ -92,6 +92,8 @@ class TcpServer implements Runnable
         new Thread(new DiscardServer(clientSocket)).start();
       if(this.service.equals("daytime"))
         new Thread(new DaytimeServer(clientSocket)).start();
+      if(this.service.equals("chargen"))
+        new Thread(new ChargenServer(clientSocket)).start();
       if(this.service.equals("time"))
         new Thread(new TimeServer(clientSocket)).start();
       if(this.service.equals("telnet"))

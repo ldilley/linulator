@@ -18,7 +18,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.linulator;
+package org.linulator.services;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -32,7 +32,10 @@ import java.net.DatagramSocket;
 import java.net.Socket;
 import java.util.Random;
 
-class ChargenServer implements Runnable
+import org.linulator.Log;
+import org.linulator.Network;
+
+public class ChargenServer implements Runnable
 {
   public static final int LINE_SIZE = 72;
   public static final int MAX_UDP_SIZE = 512;

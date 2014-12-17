@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-class Config
+public class Config
 {
   private String listenAddress;
   private int echoPort;

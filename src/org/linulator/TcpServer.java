@@ -25,6 +25,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.linulator.services.*;
+
 class TcpServer implements Runnable
 {
   protected ServerSocket serverSocket = null;
@@ -98,6 +100,8 @@ class TcpServer implements Runnable
         new Thread(new TimeServer(clientSocket)).start();
       if(this.service.equals("telnet"))
         new Thread(new TelnetServer(clientSocket)).start();
+      if(this.service.equals("http"))
+        new Thread(new HttpServer(clientSocket)).start();
     }
 
     Log.write(0, this.service + " server stopped.");

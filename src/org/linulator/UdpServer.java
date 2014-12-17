@@ -26,6 +26,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
 
+import org.linulator.services.*;
+
 class UdpServer implements Runnable
 {
   protected DatagramSocket serverSocket = null;

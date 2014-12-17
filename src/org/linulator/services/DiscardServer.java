@@ -18,7 +18,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.linulator;
+package org.linulator.services;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -28,10 +28,11 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.Socket;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-class DaytimeServer implements Runnable
+import org.linulator.Log;
+import org.linulator.Network;
+
+public class DiscardServer implements Runnable
 {
   protected byte[] buffer = null;
   protected boolean isUdp = false;
@@ -40,19 +41,16 @@ class DaytimeServer implements Runnable
   protected DatagramSocket serverSocket = null;
   protected BufferedReader input = null;
   protected BufferedWriter output = null;
-  protected SimpleDateFormat timestampFormat = null;
-  protected Date currentTime = null;
-  protected String timestamp = null;
 
   // TCP
-  public DaytimeServer(Socket clientSocket)
+  public DiscardServer(Socket clientSocket)
   {
     isUdp = false;
     this.clientSocket = clientSocket;
   }
 
   // UDP
-  public DaytimeServer(DatagramSocket serverSocket, byte[] buffer, DatagramPacket packet)
+  public DiscardServer(DatagramSocket serverSocket, byte[] buffer, DatagramPacket packet)
   {
     isUdp = true;
     this.serverSocket = serverSocket;
@@ -62,10 +60,6 @@ class DaytimeServer implements Runnable
 
   public void run()
   {
-    timestampFormat = new SimpleDateFormat("EEEE, MMMM d, yyyy HH:mm:ss-zzz");
-    currentTime = new Date();
-    timestamp = timestampFormat.format(currentTime);
-
     try
     {
       if(!isUdp)
@@ -73,18 +67,27 @@ class DaytimeServer implements Runnable
         input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         output = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
 
-        Log.write(0, "DaytimeServer: TCP connection received from " + clientSocket.getInetAddress().getHostAddress() + ':' + clientSocket.getPort() + '.');
-        Network.send(output, timestamp, true);
+        Log.write(0, "DiscardServer: TCP connection received from " + clientSocket.getInetAddress().getHostAddress() + ':' + clientSocket.getPort() + '.');
+
+        while(clientSocket != null && !clientSocket.isClosed())
+        {
+          String message = Network.receive(input);
+          if(message == null) // connection lost
+            break;
+        }
+
         input.close();
         output.close();
-        Log.write(0, "DaytimeServer: TCP connection to " + clientSocket.getInetAddress().getHostAddress() + ':' + clientSocket.getPort() + " closed.");
+        Log.write(0, "DiscardServer: TCP connection to " + clientSocket.getInetAddress().getHostAddress() + ':' + clientSocket.getPort() + " closed.");
       }
       else
       {
-        Log.write(0, "DaytimeServer: UDP packet received from " + packet.getAddress().getHostAddress() + ':' + packet.getPort() + '.');
-        buffer = timestamp.getBytes();
-        packet.setData(buffer, 0, buffer.length);
-        Network.sendTo(serverSocket, packet);
+        Log.write(0, "DiscardServer: UDP packet received from " + packet.getAddress().getHostAddress() + ':' + packet.getPort() + '.');
+
+        while(true)
+        {
+          Network.receiveFrom(serverSocket, packet);
+        }
       }
     }
     catch(IOException ioe)

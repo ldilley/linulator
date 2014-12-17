@@ -106,6 +106,13 @@ class Linulator
       TcpServer telnetServer = new TcpServer(config.getListenAddress(), config.getTelnetPort(), "telnet");
       new Thread(telnetServer).start();
     }
+    if(config.getHttpPort() != 0)
+    {
+      System.out.println("Starting HTTP server...");
+      Log.write(0, "Starting HTTP server...");
+      TcpServer httpServer = new TcpServer(config.getListenAddress(), config.getHttpPort(), "http");
+      new Thread(httpServer).start();
+    }
 
     System.out.println("Linulator started successfully.");
     Log.write(0, "Linulator started successfully.");

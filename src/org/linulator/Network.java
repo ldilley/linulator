@@ -27,7 +27,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
-class Network
+public class Network
 {
   public static String receive(BufferedReader input)
   {

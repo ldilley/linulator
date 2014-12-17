@@ -28,7 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
 
-class Log
+public class Log
 {
   public static final byte COLS = 80;
   public static final byte ROWS = 24;

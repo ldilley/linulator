@@ -18,7 +18,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.linulator;
+package org.linulator.services;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -29,7 +29,12 @@ import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.net.Socket;
 
-class TelnetServer implements Runnable
+import org.linulator.Log;
+import org.linulator.Network;
+import org.linulator.OperatingSystem;
+import org.linulator.Shell;
+
+public class TelnetServer implements Runnable
 {
   protected Socket clientSocket = null;
   protected BufferedReader input = null;

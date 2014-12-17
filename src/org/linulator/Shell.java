@@ -24,7 +24,7 @@ import org.linulator.commands.*;
 
 import java.util.HashMap;
 
-class Shell
+public class Shell
 {
   private static HashMap<String, Command> hashMap = new HashMap<String, Command>();
 

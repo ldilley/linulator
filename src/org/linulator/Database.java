@@ -35,9 +35,9 @@ class Database
   private static String protocol = "jdbc:derby:";
   private static String databaseName = "linulator";
   private static Connection connection = null;
-  private PreparedStatement preparedStatement;
-  private Statement statement;
-  private ResultSet resultSet = null;
+  private static PreparedStatement preparedStatement = null;
+  private static Statement statement = null;
+  private static ResultSet resultSet = null;
   private static Properties properties = new Properties();
 
   public static void connect()

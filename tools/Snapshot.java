@@ -34,19 +34,49 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-// ToDo: Create Entry objects to populate database and write them to the filesystem table.
-
 // This class creates the initial system baseline from an existing Linux filesystem
-class Baseline
+class Snapshot
 {
   public static final long SECONDS_IN_A_YEAR = 31556926;
+  private static String driver = "org.apache.derby.jdbc.EmbeddedDriver";
+  private static String protocol = "jdbc:derby:";
+  private static String databaseName = "linulator";
+  private static Connection connection = null;
+  private static PreparedStatement preparedStatement = null;
+  private static Statement statement = null;
+  private static ResultSet resultSet = null;
+  private static Properties properties = new Properties();
+
+  class Record
+  {
+    String path;
+    String name;
+    long inode;
+    byte type;
+    int mode;
+    int linkCount;
+    int uid;
+    int gid;
+    long atime;
+    long ctime;
+    long mtime;
+    String link;
+    String data;
+  }
 
   public static void main(String[] args)
   {
@@ -88,7 +118,10 @@ class Baseline
     {
       try
       {
-        createBaseline();
+        connectDatabase();
+        createSnapshot();
+        disconnectDatabase();
+        shutdownDatabase();
       }
       catch(IOException ioe)
       {
@@ -105,10 +138,13 @@ class Baseline
     }
   }
 
-  public static void createBaseline() throws IOException
+  public static void createSnapshot() throws IOException
   {
     Scanner scanner = new Scanner(System.in);
     String input = null;
+
+System.out.println("This program is not working yet. Do not use!");
+System.exit(0);
 
     System.out.println("Warning: This should only be performed on a fresh install to avoid importing personal data!");
     System.out.print("Type \"yes\" and press enter if you understand this and want to proceed: ");
@@ -128,6 +164,7 @@ class Baseline
   {
     @Override public FileVisitResult visitFile(Path file, BasicFileAttributes basicAttribs) throws IOException
     {
+      boolean isBinary = false;
       PosixFileAttributes posixAttribs = Files.readAttributes(file, PosixFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
       Set<PosixFilePermission> posixPerms = posixAttribs.permissions();
       String perms = PosixFilePermissions.toString(posixPerms);         // convert to symbolic format
@@ -152,11 +189,29 @@ class Baseline
       else if(type.equals("inod"))
         System.out.println("File is a link.");
       else
+      {
+        isBinary = true;
         contents = readBin(file);
+      }
 
       // Log this to file once in production
       System.out.println("Properties of file: " + file);
       System.out.println(inode + " " + perms + " " + posixAttribs.owner().getName() + ":" + posixAttribs.group().getName() + " " + posixAttribs.size() + " " + calcMtime(mtimeStamp) + "\n");
+
+      // Record entry = new Record();
+      //entry.path = file;
+      //entry.file = new File(file).getName();
+      //entry.inode = inode;
+      //entry.type = ;
+      //entry.mode = ;
+      //entry.linkCount = 1;
+      //entry.uid = posixAttribs.owner().getName();
+      //entry.gid = posixAttribs.group().getName();
+      //entry.atime = 
+      //if(isBinary)
+      //  writeDatabase(entry, true);
+      //else
+      //  writeDatabase(entry, false);
 
       return FileVisitResult.CONTINUE;
     }
@@ -250,21 +305,98 @@ class Baseline
     return data;
   }
 
-  public static void writeDatabase(Entry item)
+  public static void connectDatabase()
   {
-    // 
+    try
+    {
+      System.setProperty("derby.system.home", System.getProperty("user.dir"));
+      System.setProperty("derby.language.logStatementText", "false");
+      connection = DriverManager.getConnection(protocol + databaseName + ";create=true", properties);
+      System.out.println("Connected to database successfully.");
+      connection.setAutoCommit(false);
+      preparedStatement = connection.prepareStatement("INSERT INTO filesystem (path, name, inode, type, mode, linkcount, uid, gid, atime, " +
+                                                      "ctime, mtime, link, bindata, txtdata) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    }
+    catch(SQLException sqle)
+    {
+      System.err.println("Critical: Unable to connect to database.");
+      System.err.println(sqle.getMessage());
+      if(connection == null)
+        System.exit(1);
+    }
+  }
+
+  public static void disconnectDatabase()
+  {
+    try
+    {
+      connection.close();
+      DriverManager.getConnection("jdbc:derby:;shutdown=true");
+    }
+    catch(SQLException sqle)
+    {
+      System.err.println("Critical: Unable to disconnect from database.");
+      System.err.println(sqle.getMessage());
+    }
+  }
+
+  public static void shutdownDatabase()
+  {
+    try
+    {
+      DriverManager.getConnection("jdbc:derby:;shutdown=true");
+    }
+    catch(SQLException sqle)
+    {
+      if(((sqle.getErrorCode() == 50000) && ("XJ015".equals(sqle.getSQLState()))))
+      {
+        System.out.println("Database was shut down properly.");
+      }
+      else
+      {
+        System.err.println("Critical: Database could not be shut down properly.");
+        System.err.println(sqle.getMessage());
+      }
+    }
+  }
+
+  public static void writeDatabase(Record file, boolean isBinary)
+  {
+    try
+    {
+      preparedStatement.setString(1, file.path);
+      preparedStatement.setString(2, file.name);
+      preparedStatement.setLong(3, file.inode);
+      preparedStatement.setByte(4, file.type);
+      preparedStatement.setInt(5, file.mode);
+      preparedStatement.setInt(6, file.linkCount);
+      preparedStatement.setInt(7, file.uid);
+      preparedStatement.setInt(8, file.gid);
+      preparedStatement.setLong(9, file.atime);     // a/c/mtime may need setTimestamp()
+      preparedStatement.setLong(10, file.ctime);
+      preparedStatement.setLong(11, file.mtime);
+      preparedStatement.setString(12, file.link);
+      if(isBinary)
+        preparedStatement.setString(13, file.data); // this may need setBlob()
+      else
+        preparedStatement.setString(14, file.data); // this may need setClob()
+      preparedStatement.executeUpdate();
+      connection.commit();
+    }
+    catch(SQLException sqle)
+    {
+      System.err.println("Critical: Unable to write to database.");
+      System.err.println(sqle.getMessage());
+      if(connection == null)
+        System.exit(1);
+    }
   }
 
   public static void showUsage()
   {
-    System.out.println("Baseline Usage");
+    System.out.println("Snapshot Usage");
     System.out.println("==============");
-    System.out.println("-c\tCreate system baseline");
-    System.out.println("-h\tDisplays this help information\n");
-  }
-
-  class Entry
-  {
-    // file properties that are shoved into the database
+    System.out.println("-c\tCreate snapshot");
+    System.out.println("-h\tDisplay help\n");
   }
 }

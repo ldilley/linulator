@@ -1,6 +1,6 @@
 About
 =====
-The Snapshot program creates a snapshot of a Linux system and stores all the information in a database.
+The CloneFilesystem program creates a replica of a Linux system and stores all the information in a database.
 This database serves as the virtual filesystem for a Linulator instance.
 
 Requirements
@@ -12,12 +12,12 @@ Requirements
 
 Compiling
 =========
-The program can simply be compiled with: javac Snapshot.java
+The program can simply be compiled with: javac CloneFilesystem.java
 
 Usage
 =====
 The program has two options:
--c      Create snapshot
+-c      Create clone
 -h      Display help
 
 Database Initialization
@@ -44,11 +44,11 @@ Database Initialization
 
 9.)  You should now have a "linulator/" directory containing data.
 
-10.) Move this directory to the "tools/" directory where the Snapshot program resides:
+10.) Move this directory to the "tools/" directory where the CloneFilesystem program resides:
      mv linulator/ /path/to/linulator/tools/
 
-11.) Create a snapshot of the running operating system (* Note: This will take some time!):
-     java -cp .:../lib/derby.jar Snapshot -c
+11.) Create a clone of the running operating system (*Note: This will take some time!):
+     java -cp .:../lib/derby.jar CloneFilesystem -c
 
 12.) Move the "linulator/" database directory to the "dist/" directory where the linulator.jar resides:
      mv linulator/ ../dist/

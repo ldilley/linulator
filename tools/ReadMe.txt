@@ -10,6 +10,12 @@ Requirements
 3.) The operating system must be Linux
 4.) Apache Derby (http://db.apache.org/derby/)
 
+Quick Start
+===========
+You can safely avoid the compilation and manual database creation steps below by letting Linulator create
+the database and table information for you automatically. Just execute the "run.sh" script under the "tools/"
+directory as root: ./run.sh
+
 Compiling
 =========
 The program can simply be compiled with: javac CloneFilesystem.java
@@ -19,6 +25,13 @@ Usage
 The program has two options:
 -c      Create clone
 -h      Display help
+
+Tips
+====
+1.) Use the "exclude.lst" file to configure directory and file exclusions. Regex is supported.
+2.) Exercise caution to avoid importing anything personal such as private keys, passwords, etc.
+3.) This program should *only* be used on a fresh Linux install with no important data.
+4.) A lightweight install of a distribution is recommended for a quicker cloning process.
 
 Database Initialization
 =======================

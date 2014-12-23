@@ -1,0 +1,15 @@
+# These files cause a hang
+/proc/kallsyms
+/proc/kmsg
+
+# These files are not readable
+/proc/sys/net/ipv4/route/flush
+/proc/sys/net/ipv6/route/flush
+/proc/sys/vm/compact_memory
+
+# These files are too large to read (128T on 64-bit systems)
+/dev/core
+/proc/kcore
+
+# Don't import any running process data; Linulator will manage this later
+/proc/[0-9]+/*.*

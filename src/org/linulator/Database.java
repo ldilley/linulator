@@ -91,7 +91,7 @@ class Database
     }
     catch(SQLException sqle)
     {
-      if(((sqle.getErrorCode() == 50000) && ("XJ015".equals(sqle.getSQLState()))))
+      if(sqle.getErrorCode() == 50000 && sqle.getSQLState().equals("XJ015"))
       {
         Log.write(0, "Database was shut down properly.");
         System.out.println("Database was shut down properly.");

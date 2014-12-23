@@ -45,6 +45,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
@@ -68,6 +69,7 @@ class CloneFilesystem
   private static Properties properties = new Properties();
   private static HashMap<String, Integer> users = new HashMap<String, Integer>();
   private static HashMap<String, Integer> groups = new HashMap<String, Integer>();
+  private static ArrayList<String> excludes = new ArrayList<String>();
 
   public static class Record
   {
@@ -128,11 +130,20 @@ class CloneFilesystem
     {
       try
       {
+        System.out.println("Connecting to database...");
         connectDatabase();
+        System.out.println("Reading /etc/groups...");
         readGroup();
+        System.out.println("Read " + groups.size() + " groups.");
+        System.out.println("Reading /etc/passwd...");
         readPasswd();
+        System.out.println("Read " + users.size() + " users.");
+        System.out.println("Reading exclude.lst...");
+        readExcludes();
+        System.out.println("Read " + excludes.size() + " exclusions.");
+        System.out.println("Cloning filesystem...");
         createClone();
-        disconnectDatabase();
+        System.out.println("Shutting down database...");
         shutdownDatabase();
       }
       catch(IOException ioe)
@@ -166,6 +177,7 @@ class CloneFilesystem
     if(!input.equalsIgnoreCase("yes"))
     {
       System.out.println("Process aborted per user request.");
+      shutdownDatabase();
       System.exit(0);
     }
 
@@ -178,15 +190,11 @@ class CloneFilesystem
     @Override public FileVisitResult visitFile(Path file, BasicFileAttributes basicAttribs) throws IOException
     {
       boolean skip = false;
-      // ToDo: Allow arbitrary exclusions from a file to be read in
-      if(file.toString().equals("/proc/kmsg") || file.toString().equals("/proc/kallsyms")) // these files cause hangs on reading
+      for(int i = 0; i < excludes.size(); i++)
+      {
+        if(file.toString().matches(excludes.get(i)))
         skip = true;
-      if(file.toString().equals("/proc/sys/vm/compact_memory") || file.toString().equals("/proc/sys/net/ipv4/route/flush")) // not readable
-        skip = true;
-      if(file.toString().equals("/proc/sys/net/ipv6/route/flush"))
-        skip = true;
-      if(file.toString().matches("/proc/[0-9]+/*.*")) // is a PID, so ignore it -- we'll generate our own PID data under /proc later
-        skip = true;
+      }
       if(skip)
       {
         System.out.println("Ignored file: " + file);
@@ -252,8 +260,11 @@ class CloneFilesystem
     @Override public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes basicAttribs) throws IOException
     {
       boolean skip = false;
-      if(directory.toString().matches("/proc/[0-9]+/*.*")) // is a PID, so ignore it
+      for(int i = 0; i < excludes.size(); i++)
+      {
+        if(directory.toString().matches(excludes.get(i)))
         skip = true;
+      }
       if(skip)
       {
         System.out.println("Ignored directory: " + directory);
@@ -322,6 +333,7 @@ class CloneFilesystem
     {
       System.out.println("Unable to read /etc/group.");
       System.out.println(ioe.getMessage());
+      System.exit(1);
     }
   }
 
@@ -343,6 +355,33 @@ class CloneFilesystem
     {
       System.out.println("Unable to read /etc/passwd.");
       System.out.println(ioe.getMessage());
+      System.exit(1);
+    }
+  }
+
+  public static void readExcludes()
+  {
+    try
+    {
+      BufferedReader excludeFile = new BufferedReader(new FileReader("exclude.lst"));
+      String line = excludeFile.readLine();
+      while(line != null)
+      {
+        if(line.trim().length() == 0 || line.trim().charAt(0) == '#')
+        {
+          line = excludeFile.readLine();
+          continue;
+        }
+        excludes.add(line.trim());
+        line = excludeFile.readLine();
+      }
+      excludeFile.close();
+    }
+    catch(IOException ioe)
+    {
+      System.err.println("Critical: Unable to parse excludes.lst:");
+      System.err.println(ioe.getMessage());
+      System.exit(1);
     }
   }
 
@@ -370,9 +409,6 @@ class CloneFilesystem
 
     try
     {
-      if(passedFile.toString().equals("/dev/core") || passedFile.toString().equals("/proc/kcore")) // problematic 128T file on 64-bit systems
-        data = "";
-      else
       {
         targetFile = new FileInputStream(file);
         byte[] content = new byte[(int)file.length()]; // may cause issues for large files
@@ -393,7 +429,6 @@ class CloneFilesystem
   public static String readText(Path passedFile)
   {
     String data = null;
-
     BufferedReader targetFile;
     String line;
 
@@ -504,6 +539,43 @@ class CloneFilesystem
     return result;
   }
 
+  public static void createTable()
+  {
+    try
+    {
+      statement = connection.createStatement();
+      String query = "CREATE TABLE filesystem " +
+                     "(id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
+                     "path VARCHAR(4096) NOT NULL, " +
+                     "name VARCHAR(255) NOT NULL, " +
+                     "inode BIGINT NOT NULL, " +
+                     "type SMALLINT NOT NULL, " +
+                     "mode SMALLINT NOT NULL, " +
+                     "linkcount INT NOT NULL DEFAULT 1, " +
+                     "uid INT NOT NULL, " +
+                     "gid INT NOT NULL, " +
+                     "atime BIGINT NOT NULL, " +
+                     "ctime BIGINT NOT NULL, " +
+                     "mtime BIGINT NOT NULL, " +
+                     "link VARCHAR(4096) DEFAULT NULL, " +
+                     "bindata BLOB DEFAULT NULL, " +
+                     "txtdata CLOB DEFAULT NULL, " +
+                     "PRIMARY KEY(id))";
+      statement.execute(query);
+      statement.close();
+      connection.commit();
+      System.out.println("\"filesystem\" table created successfully.");
+      System.out.println("Reconnecting to database...");
+      connectDatabase();
+    }
+    catch(SQLException sqle)
+    {
+      System.out.println("Critical: Unable to create database table.");
+      System.out.println(sqle.getMessage());
+      System.exit(1);
+    }
+  }
+
   public static void connectDatabase()
   {
     try
@@ -512,17 +584,26 @@ class CloneFilesystem
       //System.setProperty("derby.stream.error.file", "log" + System.getProperty("file.separator") + "database.log");
       System.setProperty("derby.language.logStatementText", "false"); // set to true for increased verbosity
       connection = DriverManager.getConnection(protocol + databaseName + ";create=true", properties);
-      System.out.println("Connected to database successfully.");
       connection.setAutoCommit(false);
+      System.out.println("Connected to database successfully.");
       preparedStatement = connection.prepareStatement("INSERT INTO filesystem (path, name, inode, type, mode, linkcount, uid, gid, atime, " +
                                                       "ctime, mtime, link, bindata, txtdata) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     }
     catch(SQLException sqle)
     {
-      System.err.println("Critical: Unable to connect to database.");
-      System.err.println(sqle.getMessage());
-      if(connection == null)
+      // Table does not exist, so create it...
+      if(sqle.getSQLState().equals("42X05") || sqle.getSQLState().equals("X0X05"))
+      {
+        System.out.println("\"filesystem\" table does not exist. Creating it...");
+        createTable();
+      }
+      else
+      {
+        System.err.println("Critical: Unable to connect to database.");
+        System.err.println(sqle.getMessage());
+        //if(connection == null)
         System.exit(1);
+      }
     }
   }
 
@@ -548,7 +629,7 @@ class CloneFilesystem
     }
     catch(SQLException sqle)
     {
-      if(((sqle.getErrorCode() == 50000) && ("XJ015".equals(sqle.getSQLState()))))
+      if(sqle.getErrorCode() == 50000 && sqle.getSQLState().equals("XJ015"))
       {
         System.out.println("Database was shut down properly.");
       }

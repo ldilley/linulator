@@ -78,9 +78,37 @@ class Database
     }
   }
 
-  public static void query(String query)
+  public static ResultSet query(String query)
   {
-    //
+    try
+    {
+      statement = connection.createStatement();
+      resultSet = statement.executeQuery(query);
+    }
+    catch(SQLException sqle)
+    {
+      Log.write(2, "Unable to query database.");
+      Log.write(2, sqle.getMessage());
+      System.err.println("Critical: Unable to query database.");
+      System.err.println(sqle.getMessage());
+    }
+
+    return resultSet;
+  }
+
+  public static void endQuery()
+  {
+    try
+    {
+      statement.close();
+    }
+    catch(SQLException sqle)
+    {
+      Log.write(2, "Unable to close query.");
+      Log.write(2, sqle.getMessage());
+      System.err.println("Critical: Unable to close query.");
+      System.err.println(sqle.getMessage());
+    }
   }
 
   public static void shutdown()

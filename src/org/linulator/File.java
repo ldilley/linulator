@@ -32,8 +32,10 @@ class File
   public static final int REGULAR = 5;
   public static final int SOCKET = 6;
 
-  private String name;         // name of file prefixed with absolute path
+  private String path;         // name of file prefixed with absolute path
+  private String name;         // base name of file
   private long inode;          // unique ID
+  private byte type;           // file type
   private int mode;            // octal permissions
   private int linkCount;       // number of hard links
   private int uid;             // user ID of owner
@@ -42,6 +44,7 @@ class File
   private long atime;          // last access time
   private long ctime;          // create time
   private long mtime;          // last modify time
+  private String link;         // link path
   private boolean isBlock;     // block device
   private boolean isCharacter; // character device
   private boolean isDirectory;
@@ -50,9 +53,15 @@ class File
   private boolean isRegular;
   private boolean isSocket;
 
-  // For use with sys_open, touch, mkdir, etc.
-  public File(String name, long inode, int mode, int uid, int gid, long size, int type)
+  public File()
   {
+    // default constructor
+  }
+
+  // For use with sys_open, touch, mkdir, etc.
+  public File(String path, String name, long inode, int mode, int uid, int gid, long size, int type)
+  {
+    this.path = path;
     this.name = name;
     this.inode = inode;
     this.mode = mode;
@@ -100,6 +109,16 @@ class File
     }
   }
 
+  public String getPath()
+  {
+    return path;
+  }
+
+  public void setPath(String path)
+  {
+    this.path = path;
+  }
+
   public String getName()
   {
     return name;
@@ -118,6 +137,16 @@ class File
   public void setInode(long inode)
   {
     this.inode = inode;
+  }
+
+  public byte getType()
+  {
+    return type;
+  }
+
+  public void setType(byte type)
+  {
+    this.type = type;
   }
 
   public int getMode()
@@ -198,6 +227,16 @@ class File
   public void setMtime(long mtime)
   {
     this.mtime = mtime;
+  }
+
+  public String getLink()
+  {
+    return link;
+  }
+
+  public void setLink(String link)
+  {
+    this.link = link;
   }
 
   public boolean isBlock()

@@ -20,6 +20,8 @@
 
 package org.linulator;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -52,8 +54,90 @@ class Linulator
     System.out.println("Populating commands...");
     Log.write(0, "Populating commands...");
     Shell.populateCommands();
-    // ToDo: Load filesystem data from Derby database
+    System.out.println("Connecting to database...");
+    Log.write(0, "Connecting to database...");
     Database.connect();
+    System.out.println("Loading filesystem (this can take some time)...");
+    Log.write(0, "Loading filesystem (this can take some time)...");
+    loadFilesystem();
+    System.out.println("Starting network services...");
+    Log.write(0, "Starting network services...");
+    startServices(config);
+    System.out.println("Linulator started successfully.");
+    Log.write(0, "Linulator started successfully.");
+    mainMenu(config);
+  }
+
+  public static void loadFilesystem()
+  {
+    try
+    {
+      int currentProgress = 0;
+      int formerProgress = -1;
+      int percentage = 0;
+      long currentEntry = 0;
+      long totalEntries = 0;
+      double entryPerPercent = 0.00;
+      File file = null;
+      Tree tree = null;
+      ResultSet resultSet = null;
+      String query = "SELECT COUNT(*) FROM filesystem";
+      resultSet = Database.query(query);
+      if(resultSet.next())
+      {
+        totalEntries = resultSet.getInt(1);
+        System.out.println(totalEntries + " entries detected.");
+      }
+      query = "SELECT path, name, inode, type, mode, linkcount, uid, gid, atime, ctime, mtime, link FROM filesystem";
+      resultSet = Database.query(query);
+      //tree = new Tree(new Node("root"));
+      entryPerPercent = 100.00 / totalEntries;
+      System.out.print("Progress: ");
+      while(resultSet.next())
+      {
+        currentEntry++;
+        currentProgress = (int)Math.round(entryPerPercent * currentEntry);
+        if((currentProgress % 5 == 0) && (currentProgress != formerProgress))
+        {
+          if(percentage == 0)
+            System.out.print("0%");
+          else
+            System.out.print("..." + percentage + '%');
+          percentage += 5;
+          formerProgress = currentProgress;
+        }
+        file = new File();
+        file.setPath(resultSet.getString(1));
+        file.setName(resultSet.getString(2));
+        file.setInode(resultSet.getLong(3));
+        file.setType(resultSet.getByte(4));
+        file.setMode(resultSet.getInt(5));
+        file.setLinkCount(resultSet.getInt(6));
+        file.setUid(resultSet.getInt(7));
+        file.setGid(resultSet.getInt(8));
+        file.setAtime(resultSet.getLong(9));
+        file.setCtime(resultSet.getLong(10));
+        file.setMtime(resultSet.getLong(11));
+        file.setLink(resultSet.getString(12));
+        // ToDo: Finish tree structure in Filesystem class
+        //if(!file.getPath().equals("/"))
+        //  tree.add(file.getPath());
+      }
+      Database.endQuery();
+      System.out.println();
+    }
+    catch(SQLException sqle)
+    {
+      System.err.println("Critical: Unable to load filesystem.");
+      Log.write(2, "Unable to load filesystem.");
+      System.err.println(sqle.getMessage());
+      Log.write(2, sqle.getMessage());
+      System.exit(1);
+    }
+  }
+
+  public static void startServices(Config config)
+  {
     if(config.getEchoPort() != 0)
     {
       System.out.println("Starting echo server...");
@@ -113,10 +197,10 @@ class Linulator
       TcpServer httpServer = new TcpServer(config.getListenAddress(), config.getHttpPort(), "http");
       new Thread(httpServer).start();
     }
+  }
 
-    System.out.println("Linulator started successfully.");
-    Log.write(0, "Linulator started successfully.");
-
+  public static void mainMenu(Config config)
+  {
     while(true)
     {
       try

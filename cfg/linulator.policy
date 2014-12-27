@@ -24,6 +24,7 @@ grant
   permission java.io.FilePermission "${user.dir}", "read";
   permission java.io.FilePermission "${user.dir}${file.separator}linulator", "read, write";
   permission java.io.FilePermission "${user.dir}${file.separator}linulator${file.separator}-", "read, write, delete";
+  permission java.lang.RuntimePermission "createClassLoader";
   permission java.lang.RuntimePermission "getProtectionDomain";
   permission java.util.PropertyPermission "user.dir", "read";
   permission java.util.PropertyPermission "derby.system.home", "read, write";

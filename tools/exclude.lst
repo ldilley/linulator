@@ -1,11 +1,50 @@
+# Add the Linulator tools path here to avoid importing this file, CloneFilesystem.*, derby.jar, etc.
+#/path/to/linulator/tools
+
+# If using LVM, set your volume group and logical volume paths below. Otherwise, the import will hang.
+# Below is a sample.
+#/dev/vg_root/*.*
+
 # These files cause a hang
+/dev/block/*.*
+/dev/char/*.*
+/dev/console
+/dev/disk/*.*
+/dev/dm-[0-9]+
+/dev/hd[a-z]?[0-9]*
+/dev/input/*.*
+/dev/mapper/*.*
+/dev/port
+/dev/ptmx
+/dev/pts/*.*
+/dev/random
+/dev/root
+/dev/rtc[0-9]?
+/dev/sd[a-z]?[0-9]*
+/dev/sg[0-9]+
+/dev/stderr
+/dev/stdin
+/dev/stdout
+/dev/systty
+/dev/tty[0-9]*
+/dev/ttyS[0-9]+
+/dev/urandom
+/dev/usbmon[0-9]?
+/dev/vga_arbiter
+/proc/acpi/event
 /proc/kallsyms
 /proc/kmsg
+/usr/lib/locale/locale-archive
+/var/spool/postfix/public/pickup
+/var/spool/postfix/public/qmgr
 
 # These files are not readable
 /proc/sys/net/ipv4/route/flush
 /proc/sys/net/ipv6/route/flush
 /proc/sys/vm/compact_memory
+
+# Ignore JDK and JRE due to size
+/usr/lib/jvm/*.*
 
 # These files are too large to read (128T on 64-bit systems)
 /dev/core

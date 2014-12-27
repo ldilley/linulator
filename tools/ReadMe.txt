@@ -32,6 +32,9 @@ Tips
 2.) Exercise caution to avoid importing anything personal such as private keys, passwords, etc.
 3.) This program should *only* be used on a fresh Linux install with no important data.
 4.) A lightweight install of a distribution is recommended for a quicker cloning process.
+5.) If a file appears to be hanging, use ctrl+c and add the file to "exclude.lst".
+6.) During a re-run of the import process, existing directories and files will be skipped.
+7.) If you want to start over with a new database, simply recursively remove the "linulator/" database directory.
 
 Database Initialization
 =======================

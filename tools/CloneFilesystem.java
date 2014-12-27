@@ -145,6 +145,7 @@ class CloneFilesystem
         createClone();
         System.out.println("Shutting down database...");
         shutdownDatabase();
+        System.exit(0);
       }
       catch(IOException ioe)
       {
@@ -197,14 +198,24 @@ class CloneFilesystem
       }
       if(skip)
       {
-        System.out.println("Ignored file: " + file);
+        System.out.println("Ignored excluded file: " + file);
         return FileVisitResult.CONTINUE;
       }
 
-      System.out.println("Importing file: " + file);
+      if(pathExists(file))
+      {
+        System.out.println("Skipping existing file: " + file);
+        return FileVisitResult.CONTINUE;
+      }
+
+      System.out.print("Importing file: " + file);
 
       boolean isBinary = false;
       PosixFileAttributes posixAttribs = Files.readAttributes(file, PosixFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
+      SimpleDateFormat timestampFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+      Date currentTime = new Date();
+      String timestamp = timestampFormat.format(currentTime);
+      System.out.println(" (" + posixAttribs.size() + " bytes) " + timestamp);
       Set<PosixFilePermission> posixPerms = posixAttribs.permissions();
       String perms = PosixFilePermissions.toString(posixPerms);         // convert to symbolic format
 
@@ -215,17 +226,24 @@ class CloneFilesystem
       inode = m.group(1);
 
       // Only files have a type (not directories)
-      String type = Files.probeContentType(file).substring(0, 4);       // check for "text"
       String contents = null;
-
-      if(type.equals("text"))
+      String type = null;
+      // The check below prevents a null pointer exception
+      type = Files.probeContentType(file);
+      if(type == null)
         contents = readText(file);
-      else if(type.equals("inod"))
-        contents = "";             // is a hard link
       else
       {
-        isBinary = true;
-        contents = readBin(file);
+        type = type.substring(0, 4);
+        if(type.equals("text"))
+          contents = readText(file);
+        else if(type.equals("inod"))
+          contents = "";                                                // is a hard link
+        else
+        {
+          isBinary = true;
+          contents = readBin(file);
+        }
       }
 
       // Log this to file once in production
@@ -267,13 +285,23 @@ class CloneFilesystem
       }
       if(skip)
       {
-        System.out.println("Ignored directory: " + directory);
+        System.out.println("Ignored excluded directory: " + directory);
         return FileVisitResult.CONTINUE;
       }
 
-      System.out.println("Importing directory: " + directory);
+      if(pathExists(directory))
+      {
+        System.out.println("Skipping existing directory: " + directory);
+        return FileVisitResult.CONTINUE;
+      }
+
+      System.out.print("Importing directory: " + directory);
 
       PosixFileAttributes posixAttribs = Files.readAttributes(directory, PosixFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
+      SimpleDateFormat timestampFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+      Date currentTime = new Date();
+      String timestamp = timestampFormat.format(currentTime);
+      System.out.println(" " + timestamp);
       Set<PosixFilePermission> posixPerms = posixAttribs.permissions();
       String perms = PosixFilePermissions.toString(posixPerms);
 
@@ -331,8 +359,8 @@ class CloneFilesystem
     }
     catch(IOException ioe)
     {
-      System.out.println("Unable to read /etc/group.");
-      System.out.println(ioe.getMessage());
+      System.err.println("Unable to read /etc/group.");
+      System.err.println(ioe.getMessage());
       System.exit(1);
     }
   }
@@ -353,8 +381,8 @@ class CloneFilesystem
     }
     catch(IOException ioe)
     {
-      System.out.println("Unable to read /etc/passwd.");
-      System.out.println(ioe.getMessage());
+      System.err.println("Unable to read /etc/passwd.");
+      System.err.println(ioe.getMessage());
       System.exit(1);
     }
   }
@@ -421,6 +449,12 @@ class CloneFilesystem
     {
       System.err.println("Unable to read " + passedFile.toString() + ":");
       System.err.println(ioe.getMessage());
+      data = "";
+    }
+    catch(OutOfMemoryError oome)
+    {
+      System.err.println("Skipping: " + passedFile.toString() + " (Out of memory while reading file)");
+      data = "";
     }
 
     return data;
@@ -445,6 +479,12 @@ class CloneFilesystem
     {
       System.err.println("Unable to read " + passedFile.toString() + ":");
       System.err.println(ioe.getMessage());
+      data = "";
+    }
+    catch(OutOfMemoryError oome)
+    {
+      System.err.println("Skipping: " + passedFile.toString() + " (Out of memory while reading file)");
+      data = "";
     }
 
     return data;
@@ -481,8 +521,8 @@ class CloneFilesystem
       }
       catch(IOException ioe)
       {
-        System.out.println("Unable to run process to determine file type.");
-        System.out.println(ioe.getMessage());
+        System.err.println("Unable to run process to determine file type.");
+        System.err.println(ioe.getMessage());
       }
     }
 
@@ -539,6 +579,31 @@ class CloneFilesystem
     return result;
   }
 
+  public static boolean pathExists(Path path)
+  {
+    boolean result = false;
+
+    try
+    {
+      String query = "SELECT * FROM filesystem WHERE path = \'" + path.toString() + "\'";
+      statement = connection.createStatement();
+      resultSet = statement.executeQuery(query);
+      if(resultSet.next())
+        result = true;
+      else
+        result = false;
+      statement.close();
+    }
+    catch(SQLException sqle)
+    {
+      System.err.println("Critical: Unable to query database.");
+      System.err.println(sqle.getMessage());
+      System.exit(1);
+    }
+
+    return result;
+  }
+
   public static void createTable()
   {
     try
@@ -570,8 +635,8 @@ class CloneFilesystem
     }
     catch(SQLException sqle)
     {
-      System.out.println("Critical: Unable to create database table.");
-      System.out.println(sqle.getMessage());
+      System.err.println("Critical: Unable to create database table.");
+      System.err.println(sqle.getMessage());
       System.exit(1);
     }
   }

@@ -79,7 +79,7 @@ class Linulator
       long totalEntries = 0;
       double entryPerPercent = 0.00;
       File file = null;
-      Tree tree = null;
+      //Tree tree = null;
       ResultSet resultSet = null;
       String query = "SELECT COUNT(*) FROM filesystem";
       resultSet = Database.query(query);

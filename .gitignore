@@ -2,9 +2,11 @@
 *.class
 
 # Generated files
+.gradle/
 build/
 dist/
 jdocs/
+linulator/
 log/
 
 # Log files

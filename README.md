@@ -1,3 +1,9 @@
+Linulator
+=========
+
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
+[![Build Status](https://travis-ci.org/ldilley/linulator.svg?branch=master)](https://travis-ci.org/ldilley/linulator)
+
 ### About
 
 The goal of this project is to create a fake Linux environment with configurable network ports that
